@@ -21,12 +21,12 @@ public CheckersGame(String title)
       {
     	  for(int c = 2; c <= 8; c += 2)//for every other column
     	  {
-    		  board.add(new Checker(CheckerType.RED_REGULAR), r, c);
+    		  board.add(new Checker(CheckerType.RED_REGULAR, r, c), r, c);
     	  }
       }
       for (int c = 1; c<8;c+=2)
       {
-    	  board.add(new Checker(CheckerType.RED_REGULAR), 2, c);
+    	  board.add(new Checker(CheckerType.RED_REGULAR, 2, c), 2, c);
       }
       
       //BLACK CHECKERS
@@ -34,12 +34,12 @@ public CheckersGame(String title)
       {
     	  for(int c = 1; c <= 8; c += 2)//for every other collumn
     	  {
-    		  board.add(new Checker(CheckerType.BLACK_REGULAR), r, c);
+    		  board.add(new Checker(CheckerType.BLACK_REGULAR, r, c), r, c);
     	  }
       }
       for (int c = 2; c<=8;c+=2)
       {
-    	  board.add(new Checker(CheckerType.BLACK_REGULAR), 7, c);
+    	  board.add(new Checker(CheckerType.BLACK_REGULAR, 7, c), 7, c);
       }
       
     
@@ -48,6 +48,11 @@ public CheckersGame(String title)
       pack();
       setVisible(true);
    }
+
+
+
+
+
 
    public static void main(String[] args)
    {

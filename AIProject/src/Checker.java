@@ -7,9 +7,28 @@ public final class Checker
 
    private CheckerType checkerType;
 
-   public Checker(CheckerType checkerType)
+   private static int row;
+   private static int col;
+   public Checker(CheckerType checkerType, int row, int col)
    {
       this.checkerType = checkerType;
+      Checker.row = row;
+      Checker.col = col;
+   }
+   
+   public static int getRow(){
+	   return row;
+   }
+   public static int getCol(){
+	   return col;
+   }
+   
+   public void setRow(int row){
+	   Checker.row = row;
+	   
+   }
+   public void setCol(int col){
+	   Checker.col = col;
    }
 
    public void draw(Graphics g, int cx, int cy)

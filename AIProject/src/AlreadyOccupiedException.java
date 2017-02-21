@@ -1,6 +1,11 @@
 public class AlreadyOccupiedException extends RuntimeException
 {
-   public AlreadyOccupiedException(String msg)
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+public AlreadyOccupiedException(String msg)
    {
       super(msg);
    }

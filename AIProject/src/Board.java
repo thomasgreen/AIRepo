@@ -98,17 +98,22 @@ private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
                         	  
                         	  int x = me.getX();
                               int y = me.getY();
-                                                           
+                                   
+                              //snap to centre of square
+                              posCheck.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + 
+                                      SQUAREDIM / 2;
+                              posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + 
+                                      SQUAREDIM / 2;
                               
-                              int newrow = (SQUAREDIM + (2 * x))/(2 * SQUAREDIM);
-                              int newcol = (SQUAREDIM + (2 * y))/(2 * SQUAREDIM);
+                              int newrow = (SQUAREDIM + (2 * posCheck.cx))/(2 * SQUAREDIM);
+                              int newcol = (SQUAREDIM + (2 * posCheck.cy))/(2 * SQUAREDIM);
                              
                               System.out.println("Old Row:" + oldrow + " OldCol:" + oldcol);
                               System.out.println("New Row:" + newrow + " NewCol:" + newcol);
                               System.out.println();
                         	  //check if valid move
-                        	  if(true){ //if row move is valid
-                        		  if(true) //if col move is valid
+                        	  if((oldrow + 1) == newrow || (oldrow - 1) == newrow){ //if row move is valid
+                        		  if((oldcol + 1) == newcol || (oldcol - 1) == newcol) //if col move is valid
                         		  {
                         			  //valid move
                         			  if (inDrag)
@@ -120,31 +125,35 @@ private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
                                        // Snap checker to center of square.
 
                                        
-                                       posCheck.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + 
-                                                     SQUAREDIM / 2;
-                                       posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + 
-                                                     SQUAREDIM / 2;
+                                       
 
                                        // Do not move checker onto an occupied square.
 
                                        for (PosCheck posCheck: posChecks)
-                                          if (posCheck != Board.this.posCheck && 
-                                              posCheck.cx == Board.this.posCheck.cx &&
+                                          if (posCheck != Board.this.posCheck && posCheck.cx == Board.this.posCheck.cx &&
                                               posCheck.cy == Board.this.posCheck.cy)
                                           {
+                                        	  
                                              Board.this.posCheck.cx = oldcx;
                                              Board.this.posCheck.cy = oldcy;
                                           }
-                                       posCheck = null;
-                                       repaint();
+                                       
+                                       
                         		  }
                         		  else{
                         			  System.out.println("IBALDIV");
+                        			  Board.this.posCheck.cx = oldcx;
+                                      Board.this.posCheck.cy = oldcy;
                         		  }
                         	  }
                         	  else{
                         		  System.out.println("IBALDIV");
+                        		  Board.this.posCheck.cx = oldcx;
+                                  Board.this.posCheck.cy = oldcy;
                         	  }
+                        	  
+                        	  posCheck = null;
+                              repaint();
                         	 
                              // When mouse released, clear inDrag (to
                              // indicate no drag in progress) if inDrag is

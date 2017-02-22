@@ -80,9 +80,12 @@ public class Board extends JComponent {
 				int y = me.getY(); // row
 
 				// Locate positioned checker under mouse press.
-
-				for (int i = 0; i < checkerslist.size()-1;i++)
-					if (checkerslist.get(i).contains(x, y, checkerslist.get(i).cx, checkerslist.get(i).cy)) {
+				boolean found = false;
+				for (int i = 0; i <= checkerslist.size()-1;i++)
+				{
+					
+					if (checkerslist.get(i).contains(x, y, checkerslist.get(i).cx, checkerslist.get(i).cy)) 
+					{
 						currentChecker = checkerslist.get(i);
 						System.out.println(currentChecker.getCol());
 						Board.this.currentChecker = checkerslist.get(i);
@@ -93,8 +96,15 @@ public class Board extends JComponent {
 						inDrag = true;
 						oldrow = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM);
 						oldcol = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM);
-						
+						found = true;
 					}
+					
+				}
+				if(!found)
+				{
+					throw new NoCheckerSelectedException("No Checker Selected");
+				}
+				
 			}
 
 			@Override
@@ -126,9 +136,9 @@ public class Board extends JComponent {
 
 					// Do not move checker onto an occupied square.
 
-					for (Checker posCheck : checkerslist)
-						if (posCheck != Board.this.currentChecker && posCheck.cx == Board.this.currentChecker.cx
-								&& posCheck.cy == Board.this.currentChecker.cy) {
+					for (Checker checker : checkerslist)
+						if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
+								&& checker.cy == Board.this.currentChecker.cy) {
 
 							Board.this.currentChecker.cx = oldcx;
 							Board.this.currentChecker.cy = oldcy;
@@ -178,10 +188,14 @@ public class Board extends JComponent {
 		currentChecker = checker;
 		currentChecker.cx = (col - 1) * SQUAREDIM + SQUAREDIM / 2;
 		currentChecker.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
-		for (Checker _posCheck : checkerslist)
-			if (currentChecker.cx == _posCheck.cx && currentChecker.cy == _posCheck.cy)
+		for (Checker _checker : checkerslist){
+			if (checker.cx == _checker.cx && checker.cy == _checker.cy)
+			{				
 				throw new AlreadyOccupiedException("square at (" + row + "," + col + ") is occupied");
+			}
 		
+		}
+			checkerslist.add(checker);
 	}
 
 	@Override

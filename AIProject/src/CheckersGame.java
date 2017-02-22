@@ -23,14 +23,14 @@ public CheckersGame(String title)
     	  {
     		  Checker checker = new Checker(CheckerType.RED_REGULAR, r, c);
     		  board.add(checker,r, c);
-    		  board.checkerslist.add(checker);
+    		  //board.checkerslist.add(checker);
     	  }
       }
       for (int c = 1; c<8;c+=2)
       {
     	  Checker checker = new Checker(CheckerType.RED_REGULAR, 2, c);
     	  board.add(checker, 2, c);
-    	  board.checkerslist.add(checker);
+    	  //board.checkerslist.add(checker);
       }
       
       //BLACK CHECKERS
@@ -40,14 +40,14 @@ public CheckersGame(String title)
     	  {
     		  Checker checker = new Checker(CheckerType.BLACK_REGULAR, r, c);
     		  board.add(checker, r, c);
-    		  board.checkerslist.add(checker);
+    		  //board.checkerslist.add(checker);
     	  }
       }
       for (int c = 2; c<=8;c+=2)
       {
     	  Checker checker = new Checker(CheckerType.BLACK_REGULAR, 7, c);
     	  board.add(checker, 7, c);
-    	  board.checkerslist.add(checker);
+    	  
       }
       
     

@@ -37,6 +37,7 @@ public class Board extends JComponent {
 	private boolean inDrag = false;
 	
 
+	private Checker currentChecker;
 	// displacement between drag start coordinates and checker center
 	// coordinates
 
@@ -44,7 +45,7 @@ public class Board extends JComponent {
 
 	// reference to positioned checker at start of drag
 
-	private PosCheck posCheck;
+	
 
 	// center location of checker at start of drag
 
@@ -52,15 +53,22 @@ public class Board extends JComponent {
 
 	// list of Checker objects and their initial positions
 
-	private List<PosCheck> posChecks;
+	
 
 	// row and col of checker about to move.
 
 	private int oldrow;
 	private int oldcol;
 
+	
+	//list of Checkers on the board - each object inside contains row and col;
+	
+	public List<Checker> checkerslist; 
+	
+	
 	public Board() {
-		posChecks = new ArrayList<>();
+		
+		checkerslist = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 
 		addMouseListener(new MouseAdapter() {
@@ -73,17 +81,19 @@ public class Board extends JComponent {
 
 				// Locate positioned checker under mouse press.
 
-				for (PosCheck posCheck : posChecks)
-					if (Checker.contains(x, y, posCheck.cx, posCheck.cy)) {
-						Board.this.posCheck = posCheck;
-						oldcx = posCheck.cx;
-						oldcy = posCheck.cy;
-						deltax = x - posCheck.cx;
-						deltay = y - posCheck.cy;
+				for (int i = 0; i < checkerslist.size()-1;i++)
+					if (checkerslist.get(i).contains(x, y, checkerslist.get(i).cx, checkerslist.get(i).cy)) {
+						currentChecker = checkerslist.get(i);
+						System.out.println(currentChecker.getCol());
+						Board.this.currentChecker = checkerslist.get(i);
+						oldcx = checkerslist.get(i).cx;
+						oldcy = checkerslist.get(i).cy;
+						deltax = x - checkerslist.get(i).cx;
+						deltay = y - checkerslist.get(i).cy;
 						inDrag = true;
 						oldrow = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM);
 						oldcol = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM);
-						return;
+						
 					}
 			}
 
@@ -94,11 +104,11 @@ public class Board extends JComponent {
 				int y = me.getY();
 
 				// snap to centre of square
-				posCheck.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
-				posCheck.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
+				currentChecker.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
+				currentChecker.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
 
-				int newrow = (SQUAREDIM + (2 * posCheck.cx)) / (2 * SQUAREDIM);
-				int newcol = (SQUAREDIM + (2 * posCheck.cy)) / (2 * SQUAREDIM);
+				int newrow = (SQUAREDIM + (2 * currentChecker.cx)) / (2 * SQUAREDIM);
+				int newcol = (SQUAREDIM + (2 * currentChecker.cy)) / (2 * SQUAREDIM);
 
 				System.out.println("Old Row:" + oldrow + " OldCol:" + oldcol);
 				System.out.println("New Row:" + newrow + " NewCol:" + newcol);
@@ -116,21 +126,21 @@ public class Board extends JComponent {
 
 					// Do not move checker onto an occupied square.
 
-					for (PosCheck posCheck : posChecks)
-						if (posCheck != Board.this.posCheck && posCheck.cx == Board.this.posCheck.cx
-								&& posCheck.cy == Board.this.posCheck.cy) {
+					for (Checker posCheck : checkerslist)
+						if (posCheck != Board.this.currentChecker && posCheck.cx == Board.this.currentChecker.cx
+								&& posCheck.cy == Board.this.currentChecker.cy) {
 
-							Board.this.posCheck.cx = oldcx;
-							Board.this.posCheck.cy = oldcy;
+							Board.this.currentChecker.cx = oldcx;
+							Board.this.currentChecker.cy = oldcy;
 						}
 
 				} else {
 					System.out.println("INVALID");
-					Board.this.posCheck.cx = oldcx;
-					Board.this.posCheck.cy = oldcy;
+					Board.this.currentChecker.cx = oldcx;
+					Board.this.currentChecker.cy = oldcy;
 				}
 
-				posCheck = null;
+				currentChecker = null;
 				repaint();
 
 				// When mouse released, clear inDrag (to
@@ -150,8 +160,8 @@ public class Board extends JComponent {
 				if (inDrag) {
 					// Update location of checker center.
 
-					posCheck.cx = me.getX() - deltax;
-					posCheck.cy = me.getY() - deltay;
+					currentChecker.cx = me.getX() - deltax;
+					currentChecker.cy = me.getY() - deltay;
 					repaint();
 				}
 			}
@@ -164,14 +174,14 @@ public class Board extends JComponent {
 			throw new IllegalArgumentException("row out of range: " + row);
 		if (col < 1 || col > 8)
 			throw new IllegalArgumentException("col out of range: " + col);
-		PosCheck posCheck = new PosCheck();
-		posCheck.checker = checker;
-		posCheck.cx = (col - 1) * SQUAREDIM + SQUAREDIM / 2;
-		posCheck.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
-		for (PosCheck _posCheck : posChecks)
-			if (posCheck.cx == _posCheck.cx && posCheck.cy == _posCheck.cy)
+		//PosCheck posCheck = new PosCheck();
+		currentChecker = checker;
+		currentChecker.cx = (col - 1) * SQUAREDIM + SQUAREDIM / 2;
+		currentChecker.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
+		for (Checker _posCheck : checkerslist)
+			if (currentChecker.cx == _posCheck.cx && currentChecker.cy == _posCheck.cy)
 				throw new AlreadyOccupiedException("square at (" + row + "," + col + ") is occupied");
-		posChecks.add(posCheck);
+		
 	}
 
 	@Override
@@ -182,15 +192,15 @@ public class Board extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		paintCheckerBoard(g);
-		for (PosCheck posCheck : posChecks)
-			if (posCheck != Board.this.posCheck)
-				posCheck.checker.draw(g, posCheck.cx, posCheck.cy);
+		for (Checker posCheck : checkerslist)
+			if (posCheck != Board.this.currentChecker)
+				posCheck.draw(g, posCheck.cx, posCheck.cy);
 
 		// Draw dragged checker last so that it appears over any underlying
 		// checker.
 
-		if (posCheck != null)
-			posCheck.checker.draw(g, posCheck.cx, posCheck.cy);
+		if (currentChecker != null)
+			currentChecker.draw(g, currentChecker.cx, currentChecker.cy);
 	}
 
 	private void paintCheckerBoard(Graphics g) {
@@ -233,9 +243,4 @@ public class Board extends JComponent {
 
 	// positioned checker helper class
 
-	private class PosCheck {
-		public Checker checker;
-		public int cx;
-		public int cy;
-	}
 }

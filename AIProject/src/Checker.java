@@ -9,6 +9,10 @@ public final class Checker
 
    private static int row;
    private static int col;
+   
+   public int cx;
+	public int cy;
+	
    public Checker(CheckerType checkerType, int row, int col)
    {
       this.checkerType = checkerType;
@@ -19,7 +23,7 @@ public final class Checker
    public static int getRow(){
 	   return row;
    }
-   public static int getCol(){
+   public int getCol(){
 	   return col;
    }
    
@@ -53,7 +57,7 @@ public final class Checker
          g.drawString("K", cx, cy);
    }
 
-   public static boolean contains(int x, int y, int cx, int cy)
+   public boolean contains(int x, int y, int cx, int cy)
    {
       return (cx - x) * (cx - x) + (cy - y) * (cy - y) < DIMENSION / 2 * 
              DIMENSION / 2;

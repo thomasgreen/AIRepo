@@ -173,6 +173,8 @@ public class Board extends JComponent {
 					makeMove();
 					currentChecker.setCol(newcol);
 					currentChecker.setRow(newrow);
+					promotionCheck(newrow);
+					
 				} 
 				else {
 					currentChecker.cx = oldcx;
@@ -284,6 +286,18 @@ public class Board extends JComponent {
 				g.fillRect(col * SQUAREDIM, row * SQUAREDIM, SQUAREDIM, SQUAREDIM);
 				g.setColor((g.getColor() == Color.GRAY) ? Color.LIGHT_GRAY : Color.GRAY);
 			}
+		}
+	}
+	public void promotionCheck(int row)
+	{
+		CheckerType checkertype = currentChecker.getCheckerType();
+		if(checkertype == CheckerType.RED_REGULAR && row == 8)
+		{
+			currentChecker.promote();
+		}
+		else if(checkertype == CheckerType.BLACK_REGULAR && row==1)
+		{
+			currentChecker.promote();
 		}
 	}
 

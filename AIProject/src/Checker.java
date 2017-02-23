@@ -65,4 +65,13 @@ public final class Checker {
 	public CheckerType getCheckerType(){
 		return this.checkerType;
 	}
+	public void promote(){
+		if(checkerType == CheckerType.RED_REGULAR)
+		{
+			checkerType = CheckerType.RED_KING;
+		}
+		else if(checkerType == CheckerType.BLACK_REGULAR){
+			checkerType = CheckerType.BLACK_KING;
+		}
+	}
 }

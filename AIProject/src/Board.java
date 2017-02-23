@@ -387,7 +387,7 @@ public class Board extends JComponent {
 
 		
 		return false;
-		
+		//
 	}
 	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
 		

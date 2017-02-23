@@ -66,6 +66,14 @@ public class Board extends JComponent {
 	
 	private Human humanRED;
 	private Human humanBLACK;
+	
+	
+	//TAKE PIECE FLAG - checks if move is currently being made
+	private boolean takePieceFlag;
+	
+	//checker to delete from board
+	
+	private Checker checkerDELETE;
 	public Board() {
 
 		checkerslist = new ArrayList<>();
@@ -73,7 +81,8 @@ public class Board extends JComponent {
 		
 		humanRED = new Human("RED");
 		humanBLACK = new Human("BLACK");
-		
+		setCurrentPlayer(humanRED); //sets the red player as the first player
+		takePieceFlag = false;
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
@@ -104,7 +113,7 @@ public class Board extends JComponent {
 						deltax = x - checkerslist.get(i).cx;
 						deltay = y - checkerslist.get(i).cy;
 						inDrag = true; // set in drag to true
-						oldrow = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM); // outdated
+						oldcol = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM); // outdated
 																				// calculation
 																				// -
 																				// get(i).getRow()
@@ -113,7 +122,7 @@ public class Board extends JComponent {
 																				// same
 																				// trick
 																				// now
-						oldcol = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM); // outdated
+						oldrow = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM); // outdated
 																				// calculation
 																				// -
 																				// get(i).getRow()
@@ -153,21 +162,50 @@ public class Board extends JComponent {
 																							// with
 																							// setter
 																							// methods
+				
 
-				int newrow = (SQUAREDIM + (2 * currentChecker.cx)) / (2 * SQUAREDIM);
-				int newcol = (SQUAREDIM + (2 * currentChecker.cy)) / (2 * SQUAREDIM);
+				int newcol = (SQUAREDIM + (2 * currentChecker.cx)) / (2 * SQUAREDIM);
+				int newrow = (SQUAREDIM + (2 * currentChecker.cy)) / (2 * SQUAREDIM);
 
 				// check if valid move
-				if (validMove(oldrow, newrow, oldcol, newcol)) {
-
+				if (validMove(newrow, newcol)) {
 					makeMove();
+					currentChecker.setCol(newcol);
+					currentChecker.setRow(newrow);
 				} 
 				else {
-					System.out.println("INVALID");
 					currentChecker.cx = oldcx;
 					currentChecker.cy = oldcy;
 				}
+				
+				if(takePieceFlag)
+				{
+					checkerslist.remove(checkerDELETE); //remove checker from list
+					if(currentPlayer.equals(humanBLACK))
+					{
+						humanRED.getPlayerCheckers().remove(checkerDELETE);
+					}
+					else if(currentPlayer.equals(humanRED))
+					{
+						humanBLACK.getPlayerCheckers().remove(checkerDELETE);
+					}
+					
+				}
+				//REMOVE OTHER PEICE
+				
+				//change current player
+				if(currentPlayer.equals(humanBLACK))
+				{
+					setCurrentPlayer(humanRED);
+				}
+				else if(currentPlayer.equals(humanRED))
+				{
+					setCurrentPlayer(humanBLACK);
+				}
 
+				System.out.println("Total Checkeers: " + checkerslist.size());
+				System.out.println("RED Checkeers: " + humanRED.getPlayerCheckers().size());
+				System.out.println("BLACK Checkeers: " + humanRED.getPlayerCheckers().size());
 				currentChecker = null;
 				repaint();
 
@@ -244,33 +282,60 @@ public class Board extends JComponent {
 		}
 	}
 
-	private boolean validMove(int oldrow, int newrow, int oldcol, int newcol) {
+	private boolean validMove(int newrow, int newcol) {
 		// normal move
 	
 		CheckerType checkertype = currentChecker.getCheckerType();
 		
-		if(checkertype == CheckerType.RED_REGULAR && getCurrentPlayer().getCheckerColour() == "RED")
+		if(checkertype == CheckerType.RED_REGULAR && currentPlayer.equals(humanRED))
 		{
 			//can only move down the board
-			if ((oldcol + 1) == newcol)
+			if ((oldrow + 1) == newrow)
 			{
-				if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) // if col move
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																	  // is valid
 				{
 					return true;
 
 				}
 			}
+			//test if peice is being taken
+			if ((oldrow + 2) == newrow)
+			{
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																	  // is valid
+				{
+					if(validTake(newrow, newcol))
+					{
+						takePieceFlag = true;
+						return true;
+					}
+
+				}
+			}
 		}
-		else if(checkertype == CheckerType.BLACK_REGULAR && getCurrentPlayer().getCheckerColour() == "BLACK")
+		else if(checkertype == CheckerType.BLACK_REGULAR && currentPlayer.equals(humanBLACK))
 		{
 			//can only move up the board
-			if ((oldcol - 1) == newcol)
+			if ((oldrow - 1) == newrow)
 			{
-				if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) // if col move
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																	  // is valid
 				{
 					return true;
+
+				}
+			}
+			if ((oldrow - 2) == newrow)
+			{
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																	  // is valid
+				{
+					if(validTake(newrow, newcol))
+					{
+						takePieceFlag = true;
+						return true;
+					}
 
 				}
 			}
@@ -288,9 +353,49 @@ public class Board extends JComponent {
 				}
 			}
 		}
+		
+		//check if piece is being taken
+
+		
 		return false;
 		
 	}
+	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
+		
+		//find row/col between the move
+		//check if oppoiste checker is on it
+		
+		int avgRow = (oldrow + newrow)/2;
+		int avgCol = (oldcol + newcol)/2;
+		
+		if(currentPlayer.equals(humanRED))
+		{
+			//search black checkers
+			for(Checker checker: humanBLACK.getPlayerCheckers())
+			{
+				if(checker.getRow() == avgRow && checker.getCol() == avgCol)
+				{
+					checkerDELETE = checker;
+					return true;
+				}
+			}
+		}
+		else if(currentPlayer.equals(humanBLACK))
+		{
+			//search red checkers
+			for(Checker checker: humanRED.getPlayerCheckers())
+			{
+				if(checker.getRow() == avgRow && checker.getCol() == avgCol)
+				{
+					checkerDELETE = checker;
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	private void makeMove()
 	{
 		// valid move
@@ -309,15 +414,7 @@ public class Board extends JComponent {
 				Board.this.currentChecker.cy = oldcy;
 			}
 		
-		//change current player
-		if(currentPlayer.equals(humanBLACK))
-		{
-			setCurrentPlayer(humanRED);
-		}
-		else if(currentPlayer.equals(humanRED))
-		{
-			setCurrentPlayer(humanBLACK);
-		}
+		
 
 	}
 

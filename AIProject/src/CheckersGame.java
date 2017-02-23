@@ -18,7 +18,7 @@ public class CheckersGame extends JFrame {
 		
 
 		
-		board.setCurrentPlayer(board.getHumanRED()); //sets the red player as the first player
+		
 		// RED CHECKERS
 		for (int r = 1; r <= 3; r += 2) // for the first and third rows
 		{
@@ -60,6 +60,7 @@ public class CheckersGame extends JFrame {
 		setContentPane(board);
 
 		pack();
+	    setLocationRelativeTo(null);
 		setVisible(true);
 	}
 

@@ -381,7 +381,7 @@ public class Board extends JComponent {
 
 				}
 			}
-			
+			//
 		}
 		else if(checkertype == CheckerType.BLACK_KING || checkertype == CheckerType.RED_KING)
 		{

@@ -289,11 +289,12 @@ public class Board extends JComponent {
 		
 		if(redwin)
 		{
-			g.drawString("RED PLAYER WINS", SQUAREDIM/2, SQUAREDIM/2);
+			
+			g.drawString("RED PLAYER WINS", dimPrefSize.width/2, dimPrefSize.height/2);
 		}
 		else if(blackwin)
 		{
-			g.drawString("BLACK PLAYER WINS", SQUAREDIM/2, SQUAREDIM/2);
+			g.drawString("BLACK PLAYER WINS", dimPrefSize.width/2, dimPrefSize.height/2);
 		}
 		
 	}

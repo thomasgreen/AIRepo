@@ -73,6 +73,9 @@ public class Board extends JComponent {
 	
 	//checker to delete from board
 	
+	//Coloured Turn
+	private boolean redMove = true;
+	
 	private Checker checkerDELETE;
 	public Board() {
 
@@ -225,6 +228,7 @@ public class Board extends JComponent {
 					currentChecker.cx = me.getX() - deltax;
 					currentChecker.cy = me.getY() - deltay;
 					repaint();
+					
 				}
 			}
 		});
@@ -287,79 +291,113 @@ public class Board extends JComponent {
 	
 		CheckerType checkertype = currentChecker.getCheckerType();
 		
-		if(checkertype == CheckerType.RED_REGULAR && currentPlayer.equals(humanRED))
+		if(redMove == true) 
 		{
-			//can only move down the board
-			if ((oldrow + 1) == newrow)
+			if(checkertype == CheckerType.RED_REGULAR && currentPlayer.equals(humanRED))
 			{
-				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
-																	  // is valid
+				//can only move down the board
+				if ((oldrow + 1) == newrow)
 				{
-					return true;
-
-				}
-			}
-			//test if peice is being taken
-			if ((oldrow + 2) == newrow)
-			{
-				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
-																	  // is valid
-				{
-					if(validTake(newrow, newcol))
+					if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																	  		// is valid
 					{
-						takePieceFlag = true;
+						redMove = false;
+						System.out.println(redMove);
 						return true;
 					}
-
 				}
-			}
-		}
-		else if(checkertype == CheckerType.BLACK_REGULAR && currentPlayer.equals(humanBLACK))
-		{
-			//can only move up the board
-			if ((oldrow - 1) == newrow)
-			{
-				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
-																	  // is valid
+				//test if piece is being taken
+				if ((oldrow + 2) == newrow)
 				{
-					return true;
-
-				}
-			}
-			if ((oldrow - 2) == newrow)
-			{
-				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
-																	  // is valid
-				{
-					if(validTake(newrow, newcol))
+					if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																			// is valid
 					{
-						takePieceFlag = true;
+						if(validTake(newrow, newcol))
+						{
+							takePieceFlag = true;
+							redMove = false;
+							System.out.println(redMove);
+							return true;
+						}
+
+					}
+				}
+			
+			}
+			else if(checkertype == CheckerType.RED_KING)
+			{
+				//can move up and down
+				if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow))
+				{
+					if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																			// is valid
+					{
+						redMove = false;
+						System.out.println(redMove);
+						
 						return true;
 					}
+				}
+				
+			}
+			
+		} 
+		if(redMove ==  false) 
+		{
+		
+			if(checkertype == CheckerType.BLACK_REGULAR && currentPlayer.equals(humanBLACK))
+			{
+				//can only move up the board
+				if ((oldrow - 1) == newrow)
+				{
+					if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																	  	// is valid
+					{
+						redMove = true;
+						System.out.println(redMove);
+						return true;
+					}
+				}
+				if ((oldrow - 2) == newrow)
+				{
+					if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																	  // is valid
+					{
+						if(validTake(newrow, newcol))
+						{
+							takePieceFlag = true;
+							redMove = true;
+							System.out.println(redMove);
+							return true;
+						}
 
+					}
+				}
+			
+			}	
+			else if(checkertype == CheckerType.BLACK_KING )
+			{
+				//can move up and down
+				if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow))
+				{
+					if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																		// is valid
+					{
+						redMove = true;
+						System.out.println(redMove);
+						return true;
+					}
 				}
 			}
 			
+			
+			
+			
 		}
-		else if(checkertype == CheckerType.BLACK_KING || checkertype == CheckerType.RED_KING)
-		{
-			//can move up and down
-			if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow)){
-				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
-																		// is valid
-				{
-					return true;
-
-				}
-			}
-		}
-		
-		//check if piece is being taken
-
-		
+		System.out.println(redMove);
 		return false;
-		
 	}
+	
 	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
 		
 		//find row/col between the move

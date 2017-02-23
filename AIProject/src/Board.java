@@ -371,6 +371,16 @@ public class Board extends JComponent {
 
 				}
 			}
+			if ((oldrow + 2) == newrow || ((oldrow - 2) == newrow)){
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																		// is valid
+				{if(validTake(newrow, newcol))
+					{takePieceFlag = true;
+					return true;
+					}
+
+				}
+			}
 		}
 		
 		//check if piece is being taken

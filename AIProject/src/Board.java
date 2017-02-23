@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -78,6 +79,10 @@ public class Board extends JComponent {
 	//checker to delete from board
 	
 	private Checker checkerDELETE;
+	
+	
+	
+	
 	public Board() {
 
 		checkerslist = new ArrayList<>();
@@ -267,6 +272,7 @@ public class Board extends JComponent {
 
 		}
 		checkerslist.add(checker);
+		currentChecker = null;
 	}
 
 	@Override
@@ -286,6 +292,9 @@ public class Board extends JComponent {
 
 		if (currentChecker != null)
 			currentChecker.draw(g, currentChecker.cx, currentChecker.cy);
+		
+		Font font = new Font("Arial", Font.BOLD, 48);
+		g.setFont(font);
 		
 		if(redwin)
 		{

@@ -56,6 +56,10 @@ public class Board extends JComponent {
 
 	// list of Checkers on the board - each object inside contains row and col,
 	// and coordonites of center;
+	
+	//win check
+	private boolean redwin = false;
+	private boolean blackwin = false;
 
 	public List<Checker> checkerslist;
 	
@@ -208,6 +212,15 @@ public class Board extends JComponent {
 
 				}
 				
+				if(humanRED.getPlayerCheckers().isEmpty())
+				{
+					redwin = true;
+				}
+				if(humanBLACK.getPlayerCheckers().isEmpty())
+				{
+					blackwin = true;
+				}
+				
 				System.out.println("Total Checkeers: " + checkerslist.size());
 				System.out.println("RED Checkeers: " + humanRED.getPlayerCheckers().size());
 				System.out.println("BLACK Checkeers: " + humanRED.getPlayerCheckers().size());
@@ -271,6 +284,16 @@ public class Board extends JComponent {
 
 		if (currentChecker != null)
 			currentChecker.draw(g, currentChecker.cx, currentChecker.cy);
+		
+		if(redwin)
+		{
+			g.drawString("RED PLAYER WINS", SQUAREDIM/2, SQUAREDIM/2);
+		}
+		else if(blackwin)
+		{
+			g.drawString("BLACK PLAYER WINS", SQUAREDIM/2, SQUAREDIM/2);
+		}
+		
 	}
 
 	private void paintCheckerBoard(Graphics g) {

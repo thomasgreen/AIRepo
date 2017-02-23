@@ -382,7 +382,7 @@ public class Board extends JComponent {
 
 				}
 			}
-			
+			//
 		}
 		else if(checkertype == CheckerType.BLACK_KING || checkertype == CheckerType.RED_KING)
 		{
@@ -395,13 +395,23 @@ public class Board extends JComponent {
 
 				}
 			}
+			if ((oldrow + 2) == newrow || ((oldrow - 2) == newrow)){
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																		// is valid
+				{if(validTake(newrow, newcol))
+					{takePieceFlag = true;
+					return true;
+					}
+
+				}
+			}
 		}
 		
 		//check if piece is being taken
 
 		
 		return false;
-		
+		//
 	}
 	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
 		

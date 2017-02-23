@@ -214,11 +214,11 @@ public class Board extends JComponent {
 				
 				if(humanRED.getPlayerCheckers().isEmpty())
 				{
-					redwin = true;
+					blackwin = true;
 				}
 				if(humanBLACK.getPlayerCheckers().isEmpty())
 				{
-					blackwin = true;
+					redwin = true;
 				}
 				
 				System.out.println("Total Checkeers: " + checkerslist.size());

@@ -384,7 +384,7 @@ public class Board extends JComponent {
 			}
 			//
 		}
-		else if(checkertype == CheckerType.BLACK_KING || checkertype == CheckerType.RED_KING)
+		else if((checkertype == CheckerType.BLACK_KING && currentPlayer.equals(humanRED)) || (checkertype == CheckerType.RED_KING && currentPlayer.equals(humanRED)))
 		{
 			//can move up and down
 			if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow)){

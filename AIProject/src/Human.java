@@ -5,30 +5,13 @@ import java.util.List;
 public class Human extends Player {
 	//human class used for controlling the game 
 	
-	private List<Checker> playerCheckers;
-	private String CheckerColour;
+	
 	
 	public Human(String checkerColour){
 		
-		playerCheckers = new ArrayList<>();
-		this.CheckerColour = checkerColour;
+		super(checkerColour);
 	}
 
-	public List<Checker> getPlayerCheckers() {
-		return playerCheckers;
-	}
-
-	public void setPlayerCheckers(List<Checker> playerCheckers) {
-		this.playerCheckers = playerCheckers;
-	}
-
-	public String getCheckerColour() {
-		return CheckerColour;
-	}
-
-	public void setCheckerColour(String checkerColour) {
-		CheckerColour = checkerColour;
-	}
 	
 	
 }

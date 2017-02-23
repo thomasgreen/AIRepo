@@ -150,26 +150,12 @@ public class Board extends JComponent {
 				// check if valid move
 				if (validMove(oldrow, newrow, oldcol, newcol)) {
 
-					// valid move
-					if (inDrag)
-						inDrag = false; // turn drag off
-					else
-						return;
-
-					// Do not move checker onto an occupied square.
-
-					for (Checker checker : checkerslist)
-						if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
-								&& checker.cy == Board.this.currentChecker.cy) {
-
-							Board.this.currentChecker.cx = oldcx;
-							Board.this.currentChecker.cy = oldcy;
-						}
-
-				} else {
+					makeMove();
+				} 
+				else {
 					System.out.println("INVALID");
-					Board.this.currentChecker.cx = oldcx;
-					Board.this.currentChecker.cy = oldcy;
+					currentChecker.cx = oldcx;
+					currentChecker.cy = oldcy;
 				}
 
 				currentChecker = null;
@@ -250,26 +236,69 @@ public class Board extends JComponent {
 
 	private boolean validMove(int oldrow, int newrow, int oldcol, int newcol) {
 		// normal move
-		if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) {
-			if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
-																	// is valid
+	
+		CheckerType checkertype = currentChecker.getCheckerType();
+		
+		if(checkertype == CheckerType.RED_REGULAR)
+		{
+			//can only move down the board
+			if ((oldcol + 1) == newcol)
 			{
-				return true;
+				if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) // if col move
+																	  // is valid
+				{
+					return true;
 
+				}
 			}
 		}
-		if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) {
-			if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
-																	// is valid
+		else if(checkertype == CheckerType.BLACK_REGULAR)
+		{
+			//can only move up the board
+			if ((oldcol - 1) == newcol)
 			{
-				return true;
+				if ((oldrow + 1) == newrow || (oldrow - 1) == newrow) // if col move
+																	  // is valid
+				{
+					return true;
 
+				}
+			}
+			
+		}
+		else if(checkertype == CheckerType.BLACK_KING || checkertype == CheckerType.RED_KING)
+		{
+			//can move up and down
+			if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow)){
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																		// is valid
+				{
+					return true;
+
+				}
 			}
 		}
-
-		// CODE FOR TAKING PEICES SHOULD PROBABLY GO HERE
-
 		return false;
+		
+	}
+	private void makeMove()
+	{
+		// valid move
+		if (inDrag)
+			inDrag = false; // turn drag off
+		else
+			return;
+
+		// Do not move checker onto an occupied square.
+
+		for (Checker checker : checkerslist)
+			if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
+					&& checker.cy == Board.this.currentChecker.cy) {
+
+				Board.this.currentChecker.cx = oldcx;
+				Board.this.currentChecker.cy = oldcy;
+			}
+
 	}
 
 }

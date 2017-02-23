@@ -62,4 +62,7 @@ public final class Checker {
 	public static int getDimension() {
 		return DIMENSION;
 	}
+	public CheckerType getCheckerType(){
+		return this.checkerType;
+	}
 }

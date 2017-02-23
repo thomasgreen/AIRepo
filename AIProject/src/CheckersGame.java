@@ -1,6 +1,12 @@
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 public class CheckersGame extends JFrame {
 	/**
@@ -59,9 +65,43 @@ public class CheckersGame extends JFrame {
 
 		setContentPane(board);
 
+		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("New Game");
+	    fileMenu.setMnemonic(KeyEvent.VK_N);
+	    menuBar.add(fileMenu);
+	    
+	    
+	    JMenuItem hhMenuItem = new JMenuItem("HUMAN vs HUMAN", KeyEvent.VK_H);
+	    fileMenu.add(hhMenuItem);
+	    setJMenuBar(menuBar);
+	    
+	    JMenuItem haMenuItem = new JMenuItem("HUMAN vs AI", KeyEvent.VK_H);
+	    fileMenu.add(haMenuItem);
+	    setJMenuBar(menuBar);
+	    
+	    JMenuItem aaMenuItem = new JMenuItem("AI vs AI", KeyEvent.VK_H);
+	    fileMenu.add(aaMenuItem);
+	    setJMenuBar(menuBar);
+	    
 		pack();
 	    setLocationRelativeTo(null);
 		setVisible(true);
+		
+		hhMenuItem.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+
+		    	
+		        new CheckersGame("Checkers");
+		        setVisible(false); //you can't see me!
+		        dispose(); //Destroy the JFrame object
+		    }
+
+			
+		});
+		
+		
 	}
 
 	public static void main(String[] args) // main
@@ -72,6 +112,7 @@ public class CheckersGame extends JFrame {
 				new CheckersGame("Checkers");
 			}
 		};
+		
 		EventQueue.invokeLater(r);
 	}
 }

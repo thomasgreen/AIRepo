@@ -19,7 +19,8 @@ public class Board extends JComponent {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L; // needs to be in, dont
+														// know why
 
 	private final static int SQUAREDIM = (int) (Checker.getDimension() * 1.25);
 
@@ -35,76 +36,92 @@ public class Board extends JComponent {
 	// and cleared to false when user releases mouse button
 
 	private boolean inDrag = false;
-	
 
+	// Checker object currently being modified
 	private Checker currentChecker;
+
 	// displacement between drag start coordinates and checker center
 	// coordinates
 
 	private int deltax, deltay;
 
-	// reference to positioned checker at start of drag
-
-	
-
 	// center location of checker at start of drag
 
 	private int oldcx, oldcy;
-
-	// list of Checker objects and their initial positions
-
-	
 
 	// row and col of checker about to move.
 
 	private int oldrow;
 	private int oldcol;
 
-	
-	//list of Checkers on the board - each object inside contains row and col;
-	
-	public List<Checker> checkerslist; 
-	
-	
+	// list of Checkers on the board - each object inside contains row and col,
+	// and coordonites of center;
+
+	public List<Checker> checkerslist;
+
 	public Board() {
-		
+
 		checkerslist = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
-				// Obtain mouse coordinates at time of press.
 
+				// Obtain mouse coordinates at time of press.
 				int x = me.getX(); // col
 				int y = me.getY(); // row
 
 				// Locate positioned checker under mouse press.
 				boolean found = false;
-				for (int i = 0; i <= checkerslist.size()-1;i++)
-				{
-					
-					if (checkerslist.get(i).contains(x, y, checkerslist.get(i).cx, checkerslist.get(i).cy)) 
-					{
-						currentChecker = checkerslist.get(i);
-						System.out.println(currentChecker.getCol());
-						Board.this.currentChecker = checkerslist.get(i);
-						oldcx = checkerslist.get(i).cx;
-						oldcy = checkerslist.get(i).cy;
+				for (int i = 0; i <= checkerslist.size() - 1; i++) {
+
+					if (checkerslist.get(i).contains(x, y, checkerslist.get(i).cx, checkerslist.get(i).cy)) {
+						// If a checker has been clicked on...
+						// (Code might move to own method when checker taking is
+						// implemented
+						currentChecker = checkerslist.get(i);// make
+																// currentChecker
+																// the checker
+																// found under
+																// mouse
+						oldcx = checkerslist.get(i).cx; // should probably write
+														// getter methods for
+														// this
+						oldcy = checkerslist.get(i).cy; // should probably write
+														// getter methods for
+														// this
 						deltax = x - checkerslist.get(i).cx;
 						deltay = y - checkerslist.get(i).cy;
-						inDrag = true;
-						oldrow = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM);
-						oldcol = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM);
-						found = true;
+						inDrag = true; // set in drag to true
+						oldrow = (SQUAREDIM + (2 * oldcx)) / (2 * SQUAREDIM); // outdated
+																				// calculation
+																				// -
+																				// get(i).getRow()
+																				// might
+																				// do
+																				// same
+																				// trick
+																				// now
+						oldcol = (SQUAREDIM + (2 * oldcy)) / (2 * SQUAREDIM); // outdated
+																				// calculation
+																				// -
+																				// get(i).getRow()
+																				// might
+																				// do
+																				// same
+																				// trick
+																				// now
+						found = true; // set found to true
 					}
-					
+
 				}
-				if(!found)
-				{
+				if (!found) // if the user did not click on a checker
+				{ // might need to be modified when dealing with only clicking
+					// on red/black checkers
 					throw new NoCheckerSelectedException("No Checker Selected");
 				}
-				
+
 			}
 
 			@Override
@@ -114,25 +131,30 @@ public class Board extends JComponent {
 				int y = me.getY();
 
 				// snap to centre of square
-				currentChecker.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
-				currentChecker.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2;
+				currentChecker.cx = (x - deltax) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2; // should
+																							// be
+																							// replaced
+																							// with
+																							// setter
+																							// methods
+				currentChecker.cy = (y - deltay) / SQUAREDIM * SQUAREDIM + SQUAREDIM / 2; // should
+																							// be
+																							// replaced
+																							// with
+																							// setter
+																							// methods
 
 				int newrow = (SQUAREDIM + (2 * currentChecker.cx)) / (2 * SQUAREDIM);
 				int newcol = (SQUAREDIM + (2 * currentChecker.cy)) / (2 * SQUAREDIM);
 
-				System.out.println("Old Row:" + oldrow + " OldCol:" + oldcol);
-				System.out.println("New Row:" + newrow + " NewCol:" + newcol);
-				System.out.println();
 				// check if valid move
 				if (validMove(oldrow, newrow, oldcol, newcol)) {
 
 					// valid move
 					if (inDrag)
-						inDrag = false;
+						inDrag = false; // turn drag off
 					else
 						return;
-
-					// Snap checker to center of square.
 
 					// Do not move checker onto an occupied square.
 
@@ -152,10 +174,6 @@ public class Board extends JComponent {
 
 				currentChecker = null;
 				repaint();
-
-				// When mouse released, clear inDrag (to
-				// indicate no drag in progress) if inDrag is
-				// already set.
 
 			}
 
@@ -179,23 +197,22 @@ public class Board extends JComponent {
 
 	}
 
-	public void add(Checker checker, int row, int col) {
+	public void add(Checker checker, int row, int col) { // adds checker to the
+															// board
 		if (row < 1 || row > 8)
 			throw new IllegalArgumentException("row out of range: " + row);
 		if (col < 1 || col > 8)
 			throw new IllegalArgumentException("col out of range: " + col);
-		//PosCheck posCheck = new PosCheck();
 		currentChecker = checker;
 		currentChecker.cx = (col - 1) * SQUAREDIM + SQUAREDIM / 2;
 		currentChecker.cy = (row - 1) * SQUAREDIM + SQUAREDIM / 2;
-		for (Checker _checker : checkerslist){
-			if (checker.cx == _checker.cx && checker.cy == _checker.cy)
-			{				
+		for (Checker _checker : checkerslist) {
+			if (checker.cx == _checker.cx && checker.cy == _checker.cy) {
 				throw new AlreadyOccupiedException("square at (" + row + "," + col + ") is occupied");
 			}
-		
+
 		}
-			checkerslist.add(checker);
+		checkerslist.add(checker);
 	}
 
 	@Override
@@ -250,11 +267,9 @@ public class Board extends JComponent {
 			}
 		}
 
-		// test for taking move
-		
+		// CODE FOR TAKING PEICES SHOULD PROBABLY GO HERE
+
 		return false;
 	}
-
-	// positioned checker helper class
 
 }

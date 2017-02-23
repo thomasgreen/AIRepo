@@ -1,3 +1,4 @@
+//Exception for 2 Checkers on the same square
 public class AlreadyOccupiedException extends RuntimeException
 {
    /**

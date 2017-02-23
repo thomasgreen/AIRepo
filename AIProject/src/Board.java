@@ -58,12 +58,22 @@ public class Board extends JComponent {
 	// and coordonites of center;
 
 	public List<Checker> checkerslist;
-
+	
+	
+	//TWO PLAYER OBJECTS
+	private Human currentPlayer;
+	
+	
+	private Human humanRED;
+	private Human humanBLACK;
 	public Board() {
 
 		checkerslist = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
-
+		
+		humanRED = new Human("RED");
+		humanBLACK = new Human("BLACK");
+		
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
@@ -239,7 +249,7 @@ public class Board extends JComponent {
 	
 		CheckerType checkertype = currentChecker.getCheckerType();
 		
-		if(checkertype == CheckerType.RED_REGULAR)
+		if(checkertype == CheckerType.RED_REGULAR && getCurrentPlayer().getCheckerColour() == "RED")
 		{
 			//can only move down the board
 			if ((oldcol + 1) == newcol)
@@ -252,7 +262,7 @@ public class Board extends JComponent {
 				}
 			}
 		}
-		else if(checkertype == CheckerType.BLACK_REGULAR)
+		else if(checkertype == CheckerType.BLACK_REGULAR && getCurrentPlayer().getCheckerColour() == "BLACK")
 		{
 			//can only move up the board
 			if ((oldcol - 1) == newcol)
@@ -298,7 +308,41 @@ public class Board extends JComponent {
 				Board.this.currentChecker.cx = oldcx;
 				Board.this.currentChecker.cy = oldcy;
 			}
+		
+		//change current player
+		if(currentPlayer.equals(humanBLACK))
+		{
+			setCurrentPlayer(humanRED);
+		}
+		else if(currentPlayer.equals(humanRED))
+		{
+			setCurrentPlayer(humanBLACK);
+		}
 
+	}
+
+	public Human getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(Human currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public Human getHumanRED() {
+		return humanRED;
+	}
+
+	public Human getHumanBLACK() {
+		return humanBLACK;
+	}
+
+	public void setHumanRED(Human humanRED) {
+		this.humanRED = humanRED;
+	}
+
+	public void setHumanBLACK(Human humanBLACK) {
+		this.humanBLACK = humanBLACK;
 	}
 
 }

@@ -18,7 +18,7 @@ public class CheckersGame extends JFrame {
 	public CheckersGame(String title) {
 		super(title);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+		setResizable(false);
 		Board board = new Board();
 		
 		
@@ -65,28 +65,49 @@ public class CheckersGame extends JFrame {
 
 		setContentPane(board);
 
-		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("New Game");
-	    fileMenu.setMnemonic(KeyEvent.VK_N);
-	    menuBar.add(fileMenu);
-	    
-	    
-	    JMenuItem hhMenuItem = new JMenuItem("HUMAN vs HUMAN", KeyEvent.VK_H);
-	    fileMenu.add(hhMenuItem);
-	    setJMenuBar(menuBar);
-	    
-	    JMenuItem haMenuItem = new JMenuItem("HUMAN vs AI", KeyEvent.VK_H);
-	    fileMenu.add(haMenuItem);
-	    setJMenuBar(menuBar);
-	    
-	    JMenuItem aaMenuItem = new JMenuItem("AI vs AI", KeyEvent.VK_H);
-	    fileMenu.add(aaMenuItem);
-	    setJMenuBar(menuBar);
+		makeMenu();
+		
 	    
 		pack();
 	    setLocationRelativeTo(null);
 		setVisible(true);
 		
+		
+		
+	}
+
+	private void makeMenu() {
+		// TODO Auto-generated method stub
+		JMenuBar menuBar = new JMenuBar();
+		JMenu newGameMenu = new JMenu("New Game");
+		newGameMenu.setMnemonic(KeyEvent.VK_N);
+	    menuBar.add(newGameMenu);
+	    
+	    
+	    JMenuItem hhMenuItem = new JMenuItem("HUMAN vs HUMAN");
+	    newGameMenu.add(hhMenuItem);
+	    setJMenuBar(menuBar);
+	    
+	    JMenu haMenuItem = new JMenu("HUMAN vs AI");
+	    newGameMenu.add(haMenuItem);
+	    setJMenuBar(menuBar);
+	    
+	    JMenu aaMenuItem = new JMenu("AI vs AI");
+	    newGameMenu.add(aaMenuItem);
+	    setJMenuBar(menuBar);
+	    
+	    JMenuItem easy = new JMenuItem("EASY");
+	    haMenuItem.add(easy);
+	    
+	    JMenuItem medium = new JMenuItem("MEDIUM");
+	    haMenuItem.add(medium);
+	    
+	    JMenuItem hard = new JMenuItem("HARD");
+	    haMenuItem.add(hard);
+	    
+	    setJMenuBar(menuBar);
+	    
+	    //HUMAN V HUMAN MENU CLICK
 		hhMenuItem.addActionListener(new ActionListener() {
 
 		    @Override
@@ -98,9 +119,21 @@ public class CheckersGame extends JFrame {
 		        dispose(); //Destroy the JFrame object
 		    }
 
-			
 		});
 		
+		//EASY HUMAN V AI
+		easy.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+
+		    	
+		        new CheckersGame("Checkers EASY VS AI");
+		        setVisible(false); //you can't see me!
+		        dispose(); //Destroy the JFrame object
+		    }
+
+		});
 		
 	}
 

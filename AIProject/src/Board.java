@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,7 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
-
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,17 +294,26 @@ public class Board extends JComponent {
 		if (currentChecker != null)
 			currentChecker.draw(g, currentChecker.cx, currentChecker.cy);
 		
-		Font font = new Font("Arial", Font.BOLD, 48);
+		Font font = new Font("Arial", Font.BOLD, 40);
 		g.setFont(font);
 		
 		if(redwin)
 		{
-			
-			g.drawString("RED PLAYER WINS", dimPrefSize.width/2, dimPrefSize.height/2);
+			String string = "RED PLAYER WINS";
+			FontMetrics fm = g.getFontMetrics();
+			Rectangle2D r = fm.getStringBounds(string, g);
+			int x = (this.getWidth() - (int) r.getWidth()) / 2;
+		    int y = (this.getHeight() - (int) r.getHeight()) / 2 + fm.getAscent();
+			g.drawString(string, x, y);
 		}
 		else if(blackwin)
 		{
-			g.drawString("BLACK PLAYER WINS", dimPrefSize.width/2, dimPrefSize.height/2);
+			String string = "BLACK PLAYER WINS";
+			FontMetrics fm = g.getFontMetrics();
+			Rectangle2D r = fm.getStringBounds(string, g);
+			int x = (this.getWidth() - (int) r.getWidth()) / 2;
+		    int y = (this.getHeight() - (int) r.getHeight()) / 2 + fm.getAscent();
+			g.drawString(string, x, y);
 		}
 		
 	}
@@ -339,6 +349,7 @@ public class Board extends JComponent {
 	
 		CheckerType checkertype = currentChecker.getCheckerType();
 		
+		boolean valid = false;
 		if(checkertype == CheckerType.RED_REGULAR && currentPlayer.equals(humanRED))
 		{
 			//can only move down the board
@@ -347,7 +358,7 @@ public class Board extends JComponent {
 				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																	  // is valid
 				{
-					return true;
+					valid = true;
 
 				}
 			}
@@ -360,7 +371,7 @@ public class Board extends JComponent {
 					if(validTake(newrow, newcol))
 					{
 						takePieceFlag = true;
-						return true;
+						valid = true;
 					}
 
 				}
@@ -374,7 +385,7 @@ public class Board extends JComponent {
 				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																	  // is valid
 				{
-					return true;
+					valid = true;
 
 				}
 			}
@@ -386,7 +397,7 @@ public class Board extends JComponent {
 					if(validTake(newrow, newcol))
 					{
 						takePieceFlag = true;
-						return true;
+						valid = true;
 					}
 
 				}
@@ -400,7 +411,7 @@ public class Board extends JComponent {
 				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																		// is valid
 				{
-					return true;
+					valid = true;
 
 				}
 			}
@@ -409,7 +420,7 @@ public class Board extends JComponent {
 																		// is valid
 				{if(validTake(newrow, newcol))
 					{takePieceFlag = true;
-					return true;
+					valid = true;
 					}
 
 				}
@@ -418,8 +429,20 @@ public class Board extends JComponent {
 		
 		//check if piece is being taken
 
+		for (Checker checker : checkerslist)
+		{
+			if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
+					&& checker.cy == Board.this.currentChecker.cy) {
+
+				Board.this.currentChecker.cx = oldcx;
+				Board.this.currentChecker.cy = oldcy;
+				valid = false;
+				takePieceFlag = false;
+			}
+		}
+			
 		
-		return false;
+		return valid;
 		//
 	}
 	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
@@ -468,13 +491,7 @@ public class Board extends JComponent {
 
 		// Do not move checker onto an occupied square.
 
-		for (Checker checker : checkerslist)
-			if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
-					&& checker.cy == Board.this.currentChecker.cy) {
-
-				Board.this.currentChecker.cx = oldcx;
-				Board.this.currentChecker.cy = oldcy;
-			}
+		
 		
 		
 

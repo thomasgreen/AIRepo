@@ -60,8 +60,8 @@ public class Board extends JComponent {
 	// and coordonites of center;
 	
 	//win check
-	private boolean redwin = false;
-	private boolean blackwin = false;
+	public boolean redwin = false;
+	public boolean blackwin = false;
 
 	public List<Checker> checkerslist;
 	

@@ -344,7 +344,7 @@ public class Board extends JComponent {
 		}
 	}
 
-	private boolean validMove(int newrow, int newcol) {
+	public boolean validMove(int newrow, int newcol) {
 		// normal move
 	
 		CheckerType checkertype = currentChecker.getCheckerType();
@@ -503,6 +503,9 @@ public class Board extends JComponent {
 
 	public void setCurrentPlayer(Human currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+	public void setCurrentChecker(Checker checker){
+		currentChecker = checker;
 	}
 
 	public Human getHumanRED() {

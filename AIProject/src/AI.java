@@ -14,7 +14,6 @@ public class AI extends Player {
 	}
 	public List<Move> generateMoves(Board board)
 	{
-		Board b = board;
 		 List<Move> nextMoves = new ArrayList<Move>(); //placeholder list for moves
 		 
 		 if(board.redwin == true || board.blackwin == true) //check if player has won
@@ -28,10 +27,10 @@ public class AI extends Player {
 			 {
 				if(checker.getCheckerType().equals(CheckerType.BLACK_REGULAR))
 				{
-					b.setCurrentChecker(checker);
+					board.setCurrentChecker(checker);
 					for(int i=-1;i>-3;i--){  // the same rules from the valid move section used here
 						for(int k=-2; k<3;k++){
-					if(b.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
+					if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
 						nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k));
 						
 					}
@@ -48,10 +47,10 @@ public class AI extends Player {
 					if(checker.getCheckerType().equals(CheckerType.RED_REGULAR))
 						
 					{
-						b.setCurrentChecker(checker);
+						board.setCurrentChecker(checker);
 						for(int i=1;i>3;i++){  // the same rules from the valid move section used here
 							for(int k=-2; k<3;k++){
-						if(b.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
+						if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
 							nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k));
 							
 						}

@@ -3,18 +3,107 @@ import java.util.ArrayList;
 import java.util.List;
 public class AI extends Player {
 
+	Tree decisionTree;
+    Move lastMove;
+	Board boardCopy;
+    
 	public AI(String checkerColour) {
 		super(checkerColour);
-		// TODO Auto-generated constructor stub
+	}
+
+	
+	 public Move getAIMove(Board board) {
 		
+		 boardCopy = board;
+		 
+		 decisionTree = makeDescisionTree(boardCopy);
+		 lastMove = pickMove();
+	     return lastMove;
+	 }
+
+
+	private Move pickMove() {
+		int max = -13;
+		int index = 0;
+		for (int i = 0; i < decisionTree.getNumChildren(); i++) {
+			Tree child = decisionTree.getChild(i);
+			int smin = 13;
+			// Find the max leaf
+			for (Tree sChild : child.getChildren()) {
+				int tMax = -13;
+				for (Tree tchild : sChild.getChildren()) {
+					if (tchild.getScore() >= tMax) {
+						tMax = tchild.getScore();
+					}
+				}
+				sChild.setScore(tMax);
+				// Find the min on the third level
+				if (sChild.getScore() <= smin) {
+					smin = sChild.getScore();
+				}
+			}
+			child.setScore(smin);
+			// Find the max on the second layer and save the index
+			if (child.getScore() >= max) {
+				max = child.getScore();
+				index = i;
+			}
+		}
+		return decisionTree.getChild(index).getMove();
 	}
-	public int minimax(Board board,List<Checker> state, int depth, Player currentPlayer){
-		int bestVal =0;
-		return bestVal;
+
+
+	private Tree makeDescisionTree(Board board) {
+		// TODO Auto-generated method stub
+		 Tree mainTree = new Tree(board, null, score(board));
+		
+		 ArrayList<Move> moves;
+		 moves = generateMoves(board, this.getCheckerColour());
+		 
+		 for (Move move : moves) {
+			  // Make second row
+	          Board temp = board;
+	          temp.movePiece(move);
+	          temp.takePiece(move);
+	          Tree firstLayer = new Tree(temp, move, score(temp));
+	          ArrayList<Move> secondMoves = generateMoves(board, board.getHumanRED().getCheckerColour());
+	          
+	          for (Move sMove : secondMoves) {
+	        	  // Make third row
+	                Board temp2 = temp;
+	                temp2.movePiece(sMove);
+	                temp2.takePiece(sMove);
+	                Tree secondLayer = new Tree(temp2, sMove, score(temp2));
+	                ArrayList<Move> thirdMoves = generateMoves(board, this.getCheckerColour());
+
+	                for (Move tMove : thirdMoves) {
+	                    // Make fourth row
+	                    Board temp3 = temp2;
+	                    temp3.movePiece(tMove);
+	                    temp3.takePiece(tMove);
+
+	                    secondLayer.addChild(new Tree(temp3, tMove, score(temp3)));
+	                }
+
+	                firstLayer.addChild(secondLayer);
+	            }
+	            mainTree.addChild(firstLayer);
+	        }
+
+	        return mainTree;
+	        	  
+	        	  
+	        	  
 	}
-	public List<Move> generateMoves(Board board)
+	
+	private int score(Board board) {
+        return board.getHumanBLACK().getPlayerCheckers().size() - board.getHumanRED().getPlayerCheckers().size();
+        
+    }
+	
+	public ArrayList<Move> generateMoves(Board board, String colour)
 	{
-		 List<Move> nextMoves = new ArrayList<Move>(); //placeholder list for moves
+		 ArrayList<Move> nextMoves = new ArrayList<Move>(); //placeholder list for moves
 		 
 		 if(board.redwin == true || board.blackwin == true) //check if player has won
 		 {
@@ -23,56 +112,27 @@ public class AI extends Player {
 		 
 		 for(Checker checker : board.checkerslist)
 		 {
-			 if(board.getCurrentPlayer().getCheckerColour().equals("Black"))
-			 {
-				if(checker.getCheckerType().equals(CheckerType.BLACK_REGULAR))
-				{
-					board.setCurrentChecker(checker);
-					for(int i=-1;i>-3;i--){  // the same rules from the valid move section used here
-						for(int k=-2; k<3;k++){
-					if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
+			if(checker.getCheckerType().equals(CheckerType.BLACK_REGULAR))
+			{
+				board.setCurrentChecker(checker);
+				for(int i = -1; i > -3; i--){  // the same rules from the valid move section used here
+					for(int k = -2; k < 3 ;k++){
+						if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
 						nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k));
+						}
 						
-					}
-					}
 					}
 					
 				}
-				 
-			 }
-			
-			 else{
-				 if(board.getCurrentPlayer().getCheckerColour().equals("Red"))
-				 {
-					if(checker.getCheckerType().equals(CheckerType.RED_REGULAR))
-						
-					{
-						board.setCurrentChecker(checker);
-						for(int i=1;i>3;i++){  // the same rules from the valid move section used here
-							for(int k=-2; k<3;k++){
-						if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
-							nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k));
-							
-						}
-						}
-						}
-						
-					}
-					 
-				 }
-			 }
-			 //check each space and add each possible move
-			 return nextMoves;
-			 
+					
+			}
 		 }
-		return nextMoves;
+		 
+		 return nextMoves;
+			 
+
 	}
-	public int evaluation (Board board){
-		int score = 0;
-		
-		//set a score for actions i.e taking a piece
-		//add up the score and return it
-		
-	return score;
-}
+	
+	
+	
 }

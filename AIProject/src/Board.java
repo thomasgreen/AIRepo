@@ -575,6 +575,22 @@ public class Board extends JComponent {
 		this.humanBLACK = humanBLACK;
 	}
 
+	public int getOldrow() {
+		return oldrow;
+	}
+
+	public int getOldcol() {
+		return oldcol;
+	}
+
+	public void setOldrow(int oldrow) {
+		this.oldrow = oldrow;
+	}
+
+	public void setOldcol(int oldcol) {
+		this.oldcol = oldcol;
+	}
+
 	
 	
 	

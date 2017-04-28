@@ -54,6 +54,7 @@ public class AI extends Player {
 
 
 	private Tree makeDescisionTree(Board board) {
+		
 		// TODO Auto-generated method stub
 		 Tree mainTree = new Tree(board, null, score(board));
 		
@@ -128,7 +129,8 @@ public class AI extends Player {
 			if(checker.getCheckerType().equals(normal))
 			{
 				copy.setCurrentChecker(checker);
-				
+				copy.setOldcol(checker.getCol());
+				copy.setOldrow(checker.getRow());
 				for(int i = 1; i < 3; i++)
 				{
 					// the same rules from the valid move section used here

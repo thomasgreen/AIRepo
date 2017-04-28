@@ -80,16 +80,15 @@ public class Board extends JComponent {
 	//checker to delete from board
 	
 	private Checker checkerDELETE;
-	private AILog log;
+	public AILog log;
 	
 	
 	
-	public Board() {
-
+	public Board(AILog log) {
+		this.log = log;
 		checkerslist = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
-		log = new AILog();
-		log.show();
+		
 		humanRED = new Human("RED");
 		humanBLACK = new Human("BLACK");
 		setCurrentPlayer(humanBLACK); //sets the red player as the first player
@@ -204,8 +203,8 @@ public class Board extends JComponent {
 				{
 					if(currentPlayer.equals(humanBLACK))
 					{
-						
-						System.out.println(checkerslist);
+						/*
+						System.out.println("hr checkers"+humanRED.getPlayerCheckers());
 						AI2 srbAI = new AI2("Red");
 						setCurrentPlayer(humanRED);
 						player = "RED";
@@ -221,6 +220,30 @@ public class Board extends JComponent {
 						pieceTaken();
 						currentChecker.cx = (aiMove.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
 						currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+						
+						promotionCheck(aiMove.getNRow());
+						log.appendLog("Move Made: " + aiMove);
+						*/
+						
+						AIMM mmAI = new AIMM("RED");
+						setCurrentPlayer(humanRED);
+						player = "RED";
+						Move aiMove = mmAI.getAIMove(Board.this);
+						System.out.println("Chosen move: "+aiMove.toString());
+						setCurrentChecker(matchChecker(aiMove));
+						oldrow = aiMove.getRow();
+					
+						oldcol = aiMove.getCol();
+						
+						System.out.println("AIMOVE CHECK: " + validMove(aiMove.getNRow(),aiMove.getNCol()));
+						if(validMoves(aiMove.getNRow(),aiMove.getNCol())){
+							currentChecker.setCol(aiMove.getNCol());
+							currentChecker.setRow(aiMove.getNRow());
+							currentChecker.cx = (aiMove.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
+							currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+						}
+						pieceTaken();
+						
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
@@ -246,7 +269,7 @@ public class Board extends JComponent {
 				
 				System.out.println("Total Checkeers: " + checkerslist.size());
 				System.out.println("RED Checkeers: " + humanRED.getPlayerCheckers().size());
-				System.out.println("BLACK Checkeers: " + humanRED.getPlayerCheckers().size());
+				System.out.println("BLACK Checkeers: " + humanBLACK.getPlayerCheckers().size());
 				currentChecker = null;
 				
 				repaint();
@@ -272,7 +295,31 @@ public class Board extends JComponent {
 		});
 
 	}
+	public Board cloneBoard (){
+		Board cB = new Board(log);
+		List<Checker> cList = new ArrayList<>();
+		List<Checker> rList = new ArrayList<>();
+		List<Checker> bList = new ArrayList<>();
+		for(Checker c : checkerslist){
+			cList.add(new Checker(c));
+		}
+		for(Checker c : getHumanRED().getPlayerCheckers()){
+			rList.add(new Checker(c));
+		}
+		for(Checker c : getHumanBLACK().getPlayerCheckers()){
+			bList.add(new Checker(c));
+		}
+		cB.checkerslist = cList;
+		cB.getHumanRED().setPlayerCheckers(rList);
+		cB.getHumanBLACK().setPlayerCheckers(bList);
+		cB.setCurrentChecker(new Checker(currentChecker));
+		cB.oldcol = new Integer(oldcol);
+		cB.oldrow = new Integer(oldrow);
+		return cB;
+		
+	}
 public void pieceTaken(){
+	System.out.println("Piece Taken check : " + takePieceFlag);
 	if(takePieceFlag)
 	{
 		checkerslist.remove(checkerDELETE); //remove checker from list
@@ -391,7 +438,7 @@ public void pieceTaken(){
 				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
 																	  // is valid
 				{
-					valid = true;
+					return true;
 
 				}
 			}
@@ -401,10 +448,10 @@ public void pieceTaken(){
 				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
 																	  // is valid
 				{
-					if(validTake(newrow, newcol))
+					if(validTake(checkertype, newrow, newcol))
 					{
 						takePieceFlag = true;
-						valid = true;
+						return true;
 					}
 
 				}
@@ -427,7 +474,7 @@ public void pieceTaken(){
 				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
 																	  // is valid
 				{
-					if(validTake(newrow, newcol))
+					if(validTake(checkertype, newrow, newcol))
 					{
 						takePieceFlag = true;
 						valid = true;
@@ -451,7 +498,7 @@ public void pieceTaken(){
 			if ((oldrow + 2) == newrow || ((oldrow - 2) == newrow)){
 				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
 																		// is valid
-				{if(validTake(newrow, newcol))
+				{if(validTake(checkertype, newrow, newcol))
 					{
 					takePieceFlag = true;
 					valid = true;
@@ -465,8 +512,9 @@ public void pieceTaken(){
 
 		for (Checker checker : checkerslist)
 		{
-			if (checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
-					&& checker.cy == Board.this.currentChecker.cy) {
+			if ((checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
+					&& checker.cy == Board.this.currentChecker.cy) ||(checker != Board.this.currentChecker && checker.getCol() == Board.this.currentChecker.getCol()
+					&& checker.getRow() == Board.this.currentChecker.getRow())) {
 
 				Board.this.currentChecker.cx = oldcx;
 				Board.this.currentChecker.cy = oldcy;
@@ -479,7 +527,114 @@ public void pieceTaken(){
 		return valid;
 		//
 	}
-	private boolean validTake(int newrow, int newcol) { //checks if there is a peice between the move
+	public boolean validMoves(int newrow, int newcol) {
+		// normal move
+	if(newrow>8 || newrow<1 || newcol>8 || newcol<1){
+		return false;
+	}
+		CheckerType checkertype = currentChecker.getCheckerType();
+		
+		boolean valid = false;
+		 if(checkertype == CheckerType.RED_REGULAR && player.equals("RED"))
+		{
+			//can only move down the board
+			 System.out.println("Type and player check: PASSED");
+			if ((oldrow + 1) == newrow)
+			{
+				System.out.println("row check: PASSED");
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+					System.out.println("col check: PASSED");											  // is valid
+				{
+					return true;
+
+				}
+			}
+			//test if peice is being taken
+			if ((oldrow + 2) == newrow)
+			{
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																	  // is valid
+				{
+					if(validTake(checkertype, newrow, newcol))
+					{
+						takePieceFlag = true;
+						return true;
+					}
+
+				}
+			}
+		}
+		else if(checkertype == CheckerType.BLACK_REGULAR && player.equals("BLACK"))
+		{
+			//can only move up the board
+			if ((oldrow - 1) == newrow)
+			{
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																	  // is valid
+				{
+					valid = true;
+
+				}
+			}
+			if ((oldrow - 2) == newrow)
+			{
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																	  // is valid
+				{
+					if(validTake(checkertype, newrow, newcol))
+					{
+						takePieceFlag = true;
+						valid = true;
+					}
+
+				}
+			}
+			//
+		}
+		else if((checkertype == CheckerType.BLACK_KING && player.equals("BLACK")) || (checkertype == CheckerType.RED_KING && player.equals("RED")))
+		{
+			//can move up and down
+			if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow)){
+				if ((oldcol + 1) == newcol || (oldcol - 1) == newcol) // if col move
+																		// is valid
+				{
+					valid = true;
+
+				}
+			}
+			if ((oldrow + 2) == newrow || ((oldrow - 2) == newrow)){
+				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
+																		// is valid
+				{if(validTake(checkertype, newrow, newcol))
+					{
+					takePieceFlag = true;
+					valid = true;
+					}
+
+				}
+			}
+		}
+		
+		//check if piece is being taken
+
+		for (Checker checker : checkerslist)
+		{
+			if ((checker != Board.this.currentChecker && checker.cx == Board.this.currentChecker.cx
+					&& checker.cy == Board.this.currentChecker.cy) ||(checker != Board.this.currentChecker && checker.getCol() == Board.this.currentChecker.getCol()
+					&& checker.getRow() == Board.this.currentChecker.getRow())) {
+
+				Board.this.currentChecker.cx = oldcx;
+				Board.this.currentChecker.cy = oldcy;
+				valid = false;
+				takePieceFlag = false;
+			}
+		}
+			
+		
+		return valid;
+		//
+	}
+	public boolean validTake(CheckerType c, int newrow, int newcol) { //checks if there is a peice between the move
 		
 		//find row/col between the move
 		//check if oppoiste checker is on it
@@ -487,12 +642,12 @@ public void pieceTaken(){
 		int avgRow = (oldrow + newrow)/2;
 		int avgCol = (oldcol + newcol)/2;
 		
-		if(currentPlayer.equals(humanRED))
+		if(player.equals("RED"))
 		{
 			//search black checkers
-			for(Checker checker: humanBLACK.getPlayerCheckers())
+			for(Checker checker: checkerslist)
 			{
-				if(checker.getRow() == avgRow && checker.getCol() == avgCol)
+				if(checker.getRow() == avgRow && checker.getCol() == avgCol && !(c.equals(checker.getCheckerType())))
 				{
 					checkerDELETE = checker;
 					
@@ -500,14 +655,15 @@ public void pieceTaken(){
 				}
 			}
 		}
-		else if(currentPlayer.equals(humanBLACK))
+		else if(player.equals("BLACK"))
 		{
 			//search red checkers
-			for(Checker checker: humanRED.getPlayerCheckers())
+			for(Checker checker: checkerslist)
 			{
-				if(checker.getRow() == avgRow && checker.getCol() == avgCol)
+				if(checker.getRow() == avgRow && checker.getCol() == avgCol && !(c.equals(checker.getCheckerType())))
 				{
 					checkerDELETE = checker;
+					
 					return true;
 				}
 			}
@@ -573,6 +729,58 @@ public void pieceTaken(){
 			
 		}
 		return checker;
+	}
+	public void movePiece(Move move){
+		//update current checker
+		
+		//move the checker
+		//check it needs to be king 
+		move.getChecker().setCol(move.getNCol());
+		move.getChecker().setRow(move.getNRow());
+		move.getChecker().cx = (move.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
+		move.getChecker().cy = (move.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+		promotionCheck(move.getNRow());
+		
+		
+	}
+	public Checker matchChecker(Move m){
+		for(Checker c : checkerslist){
+			if(m.getCol() == c.getCol() && m.getRow() == c.getRow()){
+				return c;
+			}
+		}
+		System.out.println("checker not found");
+		return null;
+	}
+	
+	public void takePiece(Move move){
+		checkerslist.remove(checkerDELETE); //remove checker from list
+		if(currentPlayer.equals("humanBLACK"))
+		{
+			humanRED.getPlayerCheckers().remove(checkerDELETE);
+		}
+		else if(currentPlayer.equals("aiRED"))
+		{
+			humanBLACK.getPlayerCheckers().remove(checkerDELETE);
+		}
+		
+		
+		
+	}
+	public int getOldrow() {
+		return oldrow;
+	}
+
+	public int getOldcol() {
+		return oldcol;
+	}
+
+	public void setOldrow(int oldrow) {
+		this.oldrow = oldrow;
+	}
+
+	public void setOldcol(int oldcol) {
+		this.oldcol = oldcol;
 	}
 
 }

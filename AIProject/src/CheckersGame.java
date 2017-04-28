@@ -13,14 +13,14 @@ public class CheckersGame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	private AILog log = new AILog();
 	//https://www.itsyourturn.com/t_helptopic2030.html <--- Rules of checkers for logic ref
 	public CheckersGame(String title) {
 		super(title);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-		Board board = new Board();
-		
+		Board board = new Board(log);
+		log.show();
 		
 
 		

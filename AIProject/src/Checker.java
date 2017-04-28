@@ -18,6 +18,11 @@ public final class Checker {
 		this.row = row;
 		this.col = col;
 	}
+	public Checker(Checker c){
+		this.checkerType = c.getCheckerType();
+		this.row = c.getRow();
+		this.col = c.getCol();
+	}
 
 	public int getRow() {
 		return row;

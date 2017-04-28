@@ -32,7 +32,7 @@ public class CheckersGame extends JFrame {
 			{
 				Checker checker = new Checker(CheckerType.RED_REGULAR, r, c);
 				board.add(checker, r, c); //add the checker to the board and...
-				board.getHumanRED().getPlayerCheckers().add(checker); //add the checker to the players list
+				board.getAiRED().getPlayerCheckers().add(checker); //add the checker to the players list
 
 			}
 		}
@@ -40,7 +40,7 @@ public class CheckersGame extends JFrame {
 		{
 			Checker checker = new Checker(CheckerType.RED_REGULAR, 2, c);
 			board.add(checker, 2, c);
-			board.getHumanRED().getPlayerCheckers().add(checker);
+			board.getAiRED().getPlayerCheckers().add(checker);
 
 		}
 

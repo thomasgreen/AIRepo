@@ -66,7 +66,7 @@ public class AI extends Player {
 	          temp.movePiece(move);
 	          temp.takePiece(move);
 	          Tree firstLayer = new Tree(temp, move, score(temp));
-	          ArrayList<Move> secondMoves = generateMoves(board, board.getHumanRED().getCheckerColour());
+	          ArrayList<Move> secondMoves = generateMoves(board, board.getAiRED().getCheckerColour());
 	          
 	          for (Move sMove : secondMoves) {
 	        	  // Make third row
@@ -97,40 +97,65 @@ public class AI extends Player {
 	}
 	
 	private int score(Board board) {
-        return board.getHumanBLACK().getPlayerCheckers().size() - board.getHumanRED().getPlayerCheckers().size();
+        return board.getHumanBLACK().getPlayerCheckers().size() - board.getAiRED().getPlayerCheckers().size();
         
     }
 	
 	public ArrayList<Move> generateMoves(Board board, String colour)
 	{
+		Board copy = board;
+		CheckerType normal = null;
+		CheckerType promote = null;
+		
+		if(colour.equals("RED")){
+			normal = CheckerType.RED_REGULAR;
+			promote = CheckerType.RED_KING;
+		}
+		else if(colour.equals("BLACK"))
+		{
+			normal = CheckerType.BLACK_REGULAR;
+			promote = CheckerType.BLACK_KING;
+		}
 		 ArrayList<Move> nextMoves = new ArrayList<Move>(); //placeholder list for moves
 		 
-		 if(board.redwin == true || board.blackwin == true) //check if player has won
+		 if(copy.redwin == true || copy.blackwin == true) //check if player has won
 		 {
 			 return nextMoves; //return empty move list
 		 }	
 		 
-		 for(Checker checker : board.checkerslist)
+		 for(Checker checker : copy.checkerslist)
 		 {
-			if(checker.getCheckerType().equals(CheckerType.BLACK_REGULAR))
+			if(checker.getCheckerType().equals(normal))
 			{
-				board.setCurrentChecker(checker);
-				for(int i = -1; i > -3; i--){  // the same rules from the valid move section used here
-					for(int k = -2; k < 3 ;k++){
-						if(board.validMove(checker.getRow()+i, checker.getCol()+k)){ //if the move is valid add it to the moves list
-						nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k));
+				copy.setCurrentChecker(checker);
+				
+				for(int i = 1; i < 3; i++)
+				{
+					// the same rules from the valid move section used here
+					for(int k = -2; k < 3; k++)
+					{
+						if(checker.getRow() == 3)
+						{
+							System.out.println("DEGBUG");
 						}
-						
+						boolean check = copy.validMove(checker, checker.getRow() + i, checker.getCol() +k);
+						if(check)
+						{//if the move is valid add it to the moves list
+							if(copy.validTake(checker.getRow() + i, checker.getCol() +k))
+							{
+								nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k, true));
+							}
+							else
+							{
+								nextMoves.add(new Move(checker, checker.getRow()+i, checker.getCol()+k, false));
+								
+							}			
+						}
 					}
-					
-				}
-					
+				}		
 			}
 		 }
-		 
 		 return nextMoves;
-			 
-
 	}
 	
 	

@@ -41,7 +41,7 @@ public class Board extends JComponent {
 
 	// Checker object currently being modified
 	private Checker currentChecker;
-
+	public String player = "BLACK";
 	// displacement between drag start coordinates and checker center
 	// coordinates
 
@@ -53,8 +53,8 @@ public class Board extends JComponent {
 
 	// row and col of checker about to move.
 
-	private int oldrow;
-	private int oldcol;
+	public int oldrow;
+	public int oldcol;
 
 	// list of Checkers on the board - each object inside contains row and col,
 	// and coordonites of center;
@@ -91,7 +91,7 @@ public class Board extends JComponent {
 		
 		humanRED = new Human("RED");
 		humanBLACK = new Human("BLACK");
-		setCurrentPlayer(humanRED); //sets the red player as the first player
+		setCurrentPlayer(humanBLACK); //sets the red player as the first player
 		takePieceFlag = false;
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -181,9 +181,13 @@ public class Board extends JComponent {
 				boolean valid = false;
 				if (valid = validMove(newrow, newcol)) {
 					makeMove();
+					oldrow = currentChecker.getRow();
+					oldcol = currentChecker.getCol();
 					currentChecker.setCol(newcol);
 					currentChecker.setRow(newrow);
+					
 					promotionCheck(newrow);
+					
 					
 				} 
 				else {
@@ -191,19 +195,7 @@ public class Board extends JComponent {
 					currentChecker.cy = oldcy;
 				}
 				
-				if(takePieceFlag)
-				{
-					checkerslist.remove(checkerDELETE); //remove checker from list
-					if(currentPlayer.equals(humanBLACK))
-					{
-						humanRED.getPlayerCheckers().remove(checkerDELETE);
-					}
-					else if(currentPlayer.equals(humanRED))
-					{
-						humanBLACK.getPlayerCheckers().remove(checkerDELETE);
-					}
-					
-				}
+				pieceTaken();
 				//REMOVE OTHER PEICE
 				
 				//change current player
@@ -211,11 +203,33 @@ public class Board extends JComponent {
 				{
 					if(currentPlayer.equals(humanBLACK))
 					{
+						
+						System.out.println(checkerslist);
+						AI2 srbAI = new AI2("Red");
 						setCurrentPlayer(humanRED);
+						player = "RED";
+						Move aiMove = srbAI.simpleRule(Board.this);
+						System.out.println("Chosen move: "+aiMove.toString());
+						setCurrentChecker(findChecker(aiMove.getChecker()));
+						oldrow = aiMove.getChecker().getRow();
+						oldcol = aiMove.getChecker().getCol();
+						
+						currentChecker.setCol(aiMove.getNCol());
+						currentChecker.setRow(aiMove.getNRow());
+						validMove(aiMove.getChecker().getRow(),aiMove.getChecker().getCol() );
+						pieceTaken();
+						currentChecker.cx = (aiMove.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
+						currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+						
+						promotionCheck(aiMove.getNRow());
+						
+						setCurrentPlayer(humanBLACK);
+						player = "BLACK";
 					}
 					else if(currentPlayer.equals(humanRED))
 					{
 						setCurrentPlayer(humanBLACK);
+						player = "BLACK";
 					}
 
 				}
@@ -233,12 +247,13 @@ public class Board extends JComponent {
 				System.out.println("RED Checkeers: " + humanRED.getPlayerCheckers().size());
 				System.out.println("BLACK Checkeers: " + humanRED.getPlayerCheckers().size());
 				currentChecker = null;
+				
 				repaint();
 
 			}
 
 		});
-
+		
 		// Attach a mouse motion listener to the applet. That listener listens
 		// for mouse drag events.
 
@@ -256,7 +271,21 @@ public class Board extends JComponent {
 		});
 
 	}
-
+public void pieceTaken(){
+	if(takePieceFlag)
+	{
+		checkerslist.remove(checkerDELETE); //remove checker from list
+		if(currentPlayer.equals(humanBLACK))
+		{
+			humanRED.getPlayerCheckers().remove(checkerDELETE);
+		}
+		else if(currentPlayer.equals(humanRED))
+		{
+			humanBLACK.getPlayerCheckers().remove(checkerDELETE);
+		}
+		
+	}
+}
 	public void add(Checker checker, int row, int col) { // adds checker to the
 															// board
 		if (row < 1 || row > 8)
@@ -293,7 +322,8 @@ public class Board extends JComponent {
 
 		if (currentChecker != null)
 			currentChecker.draw(g, currentChecker.cx, currentChecker.cy);
-		
+			
+					
 		Font font = new Font("Arial", Font.BOLD, 40);
 		g.setFont(font);
 		
@@ -316,7 +346,7 @@ public class Board extends JComponent {
 			g.drawString(string, x, y);
 		}
 		
-	}
+	} 
 
 	private void paintCheckerBoard(Graphics g) {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -346,11 +376,13 @@ public class Board extends JComponent {
 
 	public boolean validMove(int newrow, int newcol) {
 		// normal move
-	
+	if(newrow>8 || newrow<1 || newcol>8 || newcol<1){
+		return false;
+	}
 		CheckerType checkertype = currentChecker.getCheckerType();
 		
 		boolean valid = false;
-		if(checkertype == CheckerType.RED_REGULAR && currentPlayer.equals(humanRED))
+		 if(checkertype == CheckerType.RED_REGULAR && player.equals("RED"))
 		{
 			//can only move down the board
 			if ((oldrow + 1) == newrow)
@@ -377,7 +409,7 @@ public class Board extends JComponent {
 				}
 			}
 		}
-		else if(checkertype == CheckerType.BLACK_REGULAR && currentPlayer.equals(humanBLACK))
+		else if(checkertype == CheckerType.BLACK_REGULAR && player.equals("BLACK"))
 		{
 			//can only move up the board
 			if ((oldrow - 1) == newrow)
@@ -404,7 +436,7 @@ public class Board extends JComponent {
 			}
 			//
 		}
-		else if((checkertype == CheckerType.BLACK_KING && currentPlayer.equals(humanBLACK)) || (checkertype == CheckerType.RED_KING && currentPlayer.equals(humanRED)))
+		else if((checkertype == CheckerType.BLACK_KING && player.equals("BLACK")) || (checkertype == CheckerType.RED_KING && player.equals("RED")))
 		{
 			//can move up and down
 			if ((oldrow + 1) == newrow || ((oldrow - 1) == newrow)){
@@ -419,7 +451,8 @@ public class Board extends JComponent {
 				if ((oldcol + 2) == newcol || (oldcol - 2) == newcol) // if col move
 																		// is valid
 				{if(validTake(newrow, newcol))
-					{takePieceFlag = true;
+					{
+					takePieceFlag = true;
 					valid = true;
 					}
 
@@ -461,6 +494,7 @@ public class Board extends JComponent {
 				if(checker.getRow() == avgRow && checker.getCol() == avgCol)
 				{
 					checkerDELETE = checker;
+					
 					return true;
 				}
 			}
@@ -515,6 +549,12 @@ public class Board extends JComponent {
 	public Human getHumanBLACK() {
 		return humanBLACK;
 	}
+	public boolean getTPFlag(){
+		return takePieceFlag;
+	}
+	public void setTPFlag(boolean set){
+		takePieceFlag = set;
+	}
 
 	public void setHumanRED(Human humanRED) {
 		this.humanRED = humanRED;
@@ -522,6 +562,16 @@ public class Board extends JComponent {
 
 	public void setHumanBLACK(Human humanBLACK) {
 		this.humanBLACK = humanBLACK;
+	}
+	public Checker findChecker(Checker checker){
+		for(Checker c : checkerslist){
+			if(checker.equals(c)){
+				return c;
+			}
+			
+			
+		}
+		return checker;
 	}
 
 }

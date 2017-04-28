@@ -6,14 +6,14 @@ public class Move {
 	private int newRow;
 	private int newCol;
 	private boolean capture;
-	public Move(Checker c, int nRow, int nCol, boolean cap)
+	public Move(Checker c, int nRow, int nCol, boolean capture)
 	{
 		checker = c;
 		row = c.getRow();
 		col = c.getCol();
 		newRow = nRow;
 		newCol = nCol;
-		capture = cap;
+		this.capture = capture;
 		
 	}
 	public Checker getChecker(){ return checker;}
@@ -22,7 +22,9 @@ public class Move {
 	public int getCol(){ return col;}
 	public int getNCol(){return newCol;}
 	public boolean getCap(){return capture;}
-	public void setCap(boolean capture){this.capture = capture;}
-	
+	public String toString(){
+		String capString = "";
+		if(capture) capString = "Piece Taken";
+		return "From : " + col + ", " + row + " to : " + newCol + ", " + newRow + " " + capString;}
 	
 }

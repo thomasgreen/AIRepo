@@ -80,7 +80,7 @@ public class Board extends JComponent {
 	//checker to delete from board
 	
 	private Checker checkerDELETE;
-	
+	private AILog log;
 	
 	
 	
@@ -88,7 +88,8 @@ public class Board extends JComponent {
 
 		checkerslist = new ArrayList<>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
-		
+		log = new AILog();
+		log.show();
 		humanRED = new Human("RED");
 		humanBLACK = new Human("BLACK");
 		setCurrentPlayer(humanBLACK); //sets the red player as the first player
@@ -222,7 +223,7 @@ public class Board extends JComponent {
 						currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
 						
 						promotionCheck(aiMove.getNRow());
-						
+						log.appendLog("Move Made: " + aiMove);
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
 					}

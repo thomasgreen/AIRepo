@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AI2 extends Player {
-
+	
 	public AI2(String checkerColour) {
 		super(checkerColour);
 		// TODO Auto-generated constructor stub
-
+		
 	}
 
 	public int minimax(Board board, List<Checker> state, int depth, Player currentPlayer) {
@@ -81,6 +81,7 @@ public class AI2 extends Player {
 													// valid move section used
 													// here
 						for (int k = -2; k < 3; k++) {
+							board.setTPFlag(false);
 							if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
 																								// the
 																								// move
@@ -94,7 +95,7 @@ public class AI2 extends Player {
 																								// list
 								if (board.getTPFlag()) {
 									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
-									board.setTPFlag(false);
+									
 								} else {
 									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
 								}
@@ -122,11 +123,12 @@ public class AI2 extends Player {
 						// used here
 						for (int i = 1; i < 3; i++) {
 							for (int k = -2; k < 3; k++) {
+								board.setTPFlag(false);
 								// if the move is valid add it to the moves
 								// list
-								boolean dummycheck = board.validMove(checker.getRow() + i, checker.getCol() + k);
 								
-								if (dummycheck && areaCheck(checker, i, k, board) == 0) {
+								
+								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
 									System.out.println("----------------valid move");
 									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
 									System.out.println("Col: " + k +"\nRow: " + i );
@@ -153,11 +155,11 @@ public class AI2 extends Player {
 						// used here
 						for (int i = -2; i < 3; i++) {
 							for (int k = -2; k < 3; k++) {
+								board.setTPFlag(false);
 								// if the move is valid add it to the moves
 								// list
-								boolean dummycheck = board.validMove(checker.getRow() + i, checker.getCol() + k);
 								
-								if (dummycheck && areaCheck(checker, i, k, board) == 0) {
+								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
 									System.out.println("----------------valid move");
 									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
 									System.out.println("Col: " + k +"\nRow: " + i );

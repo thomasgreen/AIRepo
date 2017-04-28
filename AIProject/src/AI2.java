@@ -81,7 +81,7 @@ public class AI2 extends Player {
 													// valid move section used
 													// here
 						for (int k = -2; k < 3; k++) {
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k)) { // if
+							if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
 																								// the
 																								// move
 																								// is
@@ -145,9 +145,40 @@ public class AI2 extends Player {
 							}
 						}
 
+					}else if(checker.getCheckerType().equals(CheckerType.RED_KING)){
+						System.out.println("red moves");
+						board.setCurrentChecker(checker);
+						 // the same rules from the
+						// valid move section
+						// used here
+						for (int i = -2; i < 3; i++) {
+							for (int k = -2; k < 3; k++) {
+								// if the move is valid add it to the moves
+								// list
+								boolean dummycheck = board.validMove(checker.getRow() + i, checker.getCol() + k);
+								
+								if (dummycheck && areaCheck(checker, i, k, board) == 0) {
+									System.out.println("----------------valid move");
+									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
+									System.out.println("Col: " + k +"\nRow: " + i );
+									if (board.getTPFlag()) {
+										nextMoves.add(
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+										board.setTPFlag(false);
+									} else {
+										nextMoves.add(
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+									}
+								} else {
+									
+									
+								}
+							}
+					}
+						}
 					}
 
-				}
+				
 			}
 			// check each space and add each possible move
 

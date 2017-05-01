@@ -746,7 +746,7 @@ public void pieceTaken(){
 					pieceTaken();
 					valid = true;
 					}
-
+//
 				}
 			}
 		}

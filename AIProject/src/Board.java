@@ -656,7 +656,7 @@ public void pieceTaken(){
 							if(validTake("RED", newrow, newcol))
 							{
 								takePieceFlag = true;
-								
+								pieceTaken();
 								valid = true;
 							}
 						}
@@ -702,6 +702,7 @@ public void pieceTaken(){
 																// is valid
 				{
 					if(!alreadyOccupied(newcol, newrow)){
+						
 					valid = true;
 					}
 				}
@@ -730,6 +731,7 @@ public void pieceTaken(){
 				{
 					if(!alreadyOccupied(newcol, newrow)){
 					System.out.println("Checking King : CoL");		
+					
 					valid = true;
 					}
 				}
@@ -741,7 +743,7 @@ public void pieceTaken(){
 					{
 					System.out.println("take valid");	
 					takePieceFlag = true;
-					
+					pieceTaken();
 					valid = true;
 					}
 

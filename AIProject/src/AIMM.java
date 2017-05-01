@@ -145,7 +145,6 @@ public class AIMM extends Player {
 	private int score(Board board, String colour) {
 		System.out.println("BLACK: " + board.getHumanBLACK().getPlayerCheckers().size());
 		System.out.println("RED: " + board.getHumanRED().getPlayerCheckers().size());
-		
 		int score = 0;
 		if(colour.equals("RED"))		
 		{

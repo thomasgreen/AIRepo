@@ -103,7 +103,7 @@ public class AIMM extends Player {
 	}
 
 	private int score(Board board) {
-		return board.getHumanBLACK().getPlayerCheckers().size() - board.getHumanRED().getPlayerCheckers().size();
+		return board.getHumanRED().getPlayerCheckers().size() - board.getHumanBLACK().getPlayerCheckers().size();
 
 	}
 

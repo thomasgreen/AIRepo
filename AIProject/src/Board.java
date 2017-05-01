@@ -67,10 +67,10 @@ public class Board extends JComponent {
 	
 	
 	//TWO PLAYER OBJECTS
-	private Human currentPlayer;
+	private Player currentPlayer;
 	
 	
-	private Human humanRED;
+	private AIMM humanRED;
 	private Human humanBLACK;
 	
 	
@@ -88,8 +88,8 @@ public class Board extends JComponent {
 		this.log = log;
 		checkerslist = new ArrayList<Checker>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
+		humanRED = new AIMM("RED");
 		
-		humanRED = new Human("RED");
 		humanBLACK = new Human("BLACK");
 		setCurrentPlayer(humanBLACK); //sets the red player as the first player
 		takePieceFlag = false;
@@ -237,10 +237,11 @@ public class Board extends JComponent {
 						log.appendLog("Move Made: " + aiMove);
 						*/
 						
-						AIMM mmAI = new AIMM("RED");
+						
+						
 						setCurrentPlayer(humanRED);
 						player = "RED";
-						Move aiMove = mmAI.getAIMove(Board.this);
+						Move aiMove = humanRED.getAIMove(Board.this);
 						System.out.println("Chosen move: "+aiMove.toString());
 						setCurrentChecker(matchChecker(aiMove));
 						oldrow = aiMove.getRow();
@@ -260,7 +261,7 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-						
+
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
 					}
@@ -671,18 +672,18 @@ public void pieceTaken(){
 
 	}
 
-	public Human getCurrentPlayer() {
+	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}
 
-	public void setCurrentPlayer(Human currentPlayer) {
-		this.currentPlayer = currentPlayer;
+	public void setCurrentPlayer(Player humanRED2) {
+		this.currentPlayer = humanRED2;
 	}
 	public void setCurrentChecker(Checker checker){
 		currentChecker = checker;
 	}
 
-	public Human getHumanRED() {
+	public AIMM getHumanRED() {
 		return humanRED;
 	}
 
@@ -696,7 +697,7 @@ public void pieceTaken(){
 		takePieceFlag = set;
 	}
 
-	public void setHumanRED(Human humanRED) {
+	public void setHumanRED(AIMM humanRED) {
 		this.humanRED = humanRED;
 	}
 

@@ -206,7 +206,7 @@ public class Board extends JComponent {
 				{
 					if(currentPlayer.equals(humanBLACK))
 					{
-						/*
+						
 						System.out.println("hr checkers"+humanRED.getPlayerCheckers());
 						AI2 srbAI = new AI2("Red");
 						setCurrentPlayer(humanRED);
@@ -235,8 +235,8 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-						*/
 						
+						/*
 						AIMM mmAI = new AIMM("RED");
 						setCurrentPlayer(humanRED);
 						player = "RED";
@@ -260,7 +260,7 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-						
+						*/
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
 					}
@@ -500,8 +500,9 @@ public void pieceTaken(){
 				if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
 																	  // is valid
 				{
+					if(!alreadyOccupied(newcol, newrow)){
 					valid = true;
-
+					}
 				}
 			}
 			if ((currentChecker.getRow() - 2) == newrow)
@@ -511,7 +512,7 @@ public void pieceTaken(){
 																	  // is valid
 				{
 					System.out.println("Taking a red piece p2");
-					if(validTake("BLACK", newrow, newcol))
+					if(validTake("BLACK", newrow, newcol) && !alreadyOccupied(newcol, newrow))
 					{
 						System.out.println("Taking a red piece valid take");
 						takePieceFlag = true;
@@ -533,15 +534,16 @@ public void pieceTaken(){
 				if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
 																// is valid
 				{
+					if(!alreadyOccupied(newcol, newrow)){
 					System.out.println("Checking King : CoL");		
 					valid = true;
-
+					}
 				}
 			}
 			if ((currentChecker.getRow() + 2) == newrow || ((currentChecker.getRow() - 2) == newrow)){
 				if ((currentChecker.getCol() + 2) == newcol || (currentChecker.getCol() - 2) == newcol) // if col move
 																		// is valid
-				{if(validTake("BLACK", newrow, newcol))
+				{if(validTake("BLACK", newrow, newcol)&& !alreadyOccupied(newcol, newrow))
 					{
 					takePieceFlag = true;
 					pieceTaken();
@@ -709,7 +711,7 @@ public void pieceTaken(){
 			
 			
 		}
-		return checker;
+		return null;
 	}
 	public void movePiece(Checker c, int col, int row){
 		//update current checker

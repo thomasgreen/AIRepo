@@ -206,12 +206,12 @@ public class AI2 extends Player {
 						colourM1 = "RED";
 					}
 				if(!m.getChecker().equals(c) && !colourM.equals(colourM1)  && ((m.getNCol()==c.getCol()+1)||m.getNCol()==c.getCol()-1) && ((m.getNRow()==c.getRow()+1)||m.getNCol()==c.getRow()-1)){
-					if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR) && !(m.getNRow()==c.getRow()-1)){
+					if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR) && !(m.getNRow()==c.getRow()+1)){
 						m.setThreat(true);
 						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
 								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
 					}
-					else if(m.getChecker().getCheckerType().equals(CheckerType.RED_REGULAR) && !(m.getNRow()==c.getRow()+1)){
+					else if(m.getChecker().getCheckerType().equals(CheckerType.RED_REGULAR) && !(m.getNRow()==c.getRow()-1)){
 						m.setThreat(true);
 						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
 								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());

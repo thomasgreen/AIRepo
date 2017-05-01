@@ -29,16 +29,38 @@ public class AIMM extends Player {
 	}
 
 	private Move pickMove() {
-		int max = -13;
+		
 		int index = 0;
+		int max = -13;
+		
 		for (int i = 0; i < decisionTree.getNumChildren(); i++) {
 			Tree child = decisionTree.getChild(i);
 			int smin = 13;
-			// Find the max leaf
 			for (Tree sChild : child.getChildren()) {
 				int tMax = -13;
+				
 				for (Tree tchild : sChild.getChildren()) {
+					int fMin = 13;
+					for(Tree fchild: tchild.getChildren())
+					{
+						int fiMax = -13;
+						for(Tree fichild : fchild.getChildren())
+						{
+							if (fichild.getScore() >= fiMax) {
+								
+								fiMax = tchild.getScore();
+							}
+						}
+						fchild.setScore(fiMax);
+						if (fchild.getScore() <= fMin) {
+							
+							fMin = tchild.getScore();
+						}
+						
+					}	
+					tchild.setScore(fMin);
 					if (tchild.getScore() >= tMax) {
+						
 						tMax = tchild.getScore();
 					}
 				}
@@ -61,7 +83,7 @@ public class AIMM extends Player {
 	private Tree makeDescisionTree(Board board) {
 
 		// TODO Auto-generated method stub
-		Tree mainTree = new Tree(board, null, score(board));
+		Tree mainTree = new Tree(board, null, score(board, "RED"));
 
 		List<Move> moves;
 		moves = generateMoves(board, "RED");
@@ -72,7 +94,7 @@ public class AIMM extends Player {
 			Board temp = board;
 			temp.movePieceAI(move);
 			temp.takePiece(move);
-			Tree firstLayer = new Tree(temp, move, score(temp));
+			Tree firstLayer = new Tree(temp, move, score(temp, "RED"));
 			List<Move> secondMoves = generateMoves(board, "BLACK");
 
 			for (Move sMove : secondMoves) {
@@ -81,7 +103,7 @@ public class AIMM extends Player {
 				Board temp2 = temp;
 				temp2.movePieceAI(sMove);
 				temp2.takePiece(sMove);
-				Tree secondLayer = new Tree(temp2, sMove, score(temp2));
+				Tree secondLayer = new Tree(temp2, sMove, score(temp2, "BLACK"));
 				List<Move> thirdMoves = generateMoves(board, "RED");
 
 				for (Move tMove : thirdMoves) {
@@ -89,8 +111,28 @@ public class AIMM extends Player {
 					Board temp3 = temp2;
 					temp3.movePieceAI(tMove);
 					temp3.takePiece(tMove);
+					Tree thirdlayer = new Tree(temp3, tMove, score(temp3, "RED"));					
+					List<Move> fourthmoves = generateMoves(board, "BLACK");
 
-					secondLayer.addChild(new Tree(temp3, tMove, score(temp3)));
+					for (Move fMove : fourthmoves) {
+						// Make fourth row
+						Board temp4 = temp3;
+						temp4.movePieceAI(fMove);
+						temp4.takePiece(fMove);
+						Tree fourthlayer = new Tree(temp4, fMove, score(temp4, "BLACK"));					
+						for (Move fiMove : fourthmoves) {
+							// Make fourth row
+							Board temp5 = temp4;
+							temp4.movePieceAI(fiMove);
+							temp4.takePiece(fiMove);
+
+							fourthlayer.addChild(new Tree(temp5, fiMove, score(temp5, "RED")));
+						}
+						thirdlayer.addChild(fourthlayer);
+					}
+					secondLayer.addChild(thirdlayer);
+				
+				
 				}
 
 				firstLayer.addChild(secondLayer);
@@ -102,9 +144,86 @@ public class AIMM extends Player {
 
 	}
 
-	private int score(Board board) {
-		return board.getHumanRED().getPlayerCheckers().size() - board.getHumanBLACK().getPlayerCheckers().size();
+	private int score(Board board, String colour) {
+		
+		
+		if(colour.equals("RED"))
+		{
+			int score = 0;
+			
+			for(Checker checker : board.checkerslist)
+			{
+				CheckerType checkerType = checker.getCheckerType();
+				switch(checkerType){
+				case RED_REGULAR: 
+					 score = score + 1;
+					 break;
+				case BLACK_REGULAR:
+					 score = score - 1;
+					 break;
+				case RED_KING:
+					 score = score + 2;
+					 break;
+				case BLACK_KING:
+					 score = score - 2;
+					 break;
+				}
+			}
+			return score;
+		}
+		else
+		{
+			int score = 0;
+			
+			for(Checker checker : board.checkerslist)
+			{
+				CheckerType checkerType = checker.getCheckerType();
+				switch(checkerType){
+				case RED_REGULAR: 
+					score = score - 1;
+					break;
+				case BLACK_REGULAR:
+					score = score + 1;
+					break;
+				case RED_KING:
+					score = score - 2;
+					break;
+				case BLACK_KING:
+					score = score + 2;
+					break;
+				}
+			}
+			
+			
+			return score;
 
+		}
+		
+		/*
+		int score = 0;
+		
+		for(Checker checker : board.checkerslist)
+		{
+			CheckerType checkerType = checker.getCheckerType();
+			switch(checkerType){
+			case RED_REGULAR: 
+				//do something
+				score += 1;
+			case BLACK_REGULAR:
+				//do something
+				score -= 1;
+			case RED_KING:
+				//do something
+				score += 5;
+			case BLACK_KING:
+				//do something
+				score -= 5;
+			}
+		}
+		
+		
+		return score;
+*/
 	}
 
 	public int areaCheck(Checker checker, int i, int k, Board board) {

@@ -94,7 +94,7 @@ public class AI2 extends Player {
 													// here
 						for (int k = -2; k < 3; k++) {
 							board.setTPFlag(false);
-							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
+							if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
 																								// the
 																								// move
 																								// is

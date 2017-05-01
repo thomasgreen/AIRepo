@@ -731,7 +731,7 @@ public void pieceTaken(){
 				{
 					if(!alreadyOccupied(newcol, newrow)){
 					System.out.println("Checking King : CoL");		
-					
+					//
 					valid = true;
 					}
 				}

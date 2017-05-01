@@ -13,6 +13,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JComponent;
 
@@ -63,6 +64,7 @@ public class Board extends JComponent {
 	//win check
 	public boolean redwin = false;
 	public boolean blackwin = false;
+	public boolean stalemate = false;
 
 	public List<Checker> checkerslist;
 	
@@ -158,7 +160,9 @@ public class Board extends JComponent {
 
 			@Override
 			public void mouseReleased(MouseEvent me) {
+				
 				playAI();
+			
 				int x = me.getX();
 				int y = me.getY();
 
@@ -330,8 +334,8 @@ public class Board extends JComponent {
 		
 
 	}
-	public void playAI(){
-		if(gameType.equals("AIvsAI")){
+	public void playAI() {
+		if(gameType.equals("SRAIvsSRAI")){
 			do{
 				
 					AI2 rAI = new AI2("RED");
@@ -339,7 +343,9 @@ public class Board extends JComponent {
 					
 					Move aiMove;
 					if(player.equals("RED")){
+						
 						aiMove = rAI.simpleRule(Board.this);
+						
 					}
 					else{
 						aiMove = bAI.simpleRule(Board.this);
@@ -378,11 +384,78 @@ public class Board extends JComponent {
 						player = "RED";
 					}
 					
-					
+				
 				repaint();	
 				
 			}while(!redwin || !blackwin);
+		}else if(gameType.equals("SRAIvsMMAI")){
+			setCurrentChecker(humanBLACK.getPlayerCheckers().get(0));
+			int i = 0;
+			do{
+
+				AIMM rAI = new AIMM("RED");
+				AI2 bAI = new AI2("BLACK");
+				
+				Move aiMove;
+				if(player.equals("RED")){
+					try{
+					aiMove = rAI.getAIMove(Board.this);
+					}catch(IndexOutOfBoundsException ex){ //the mm algorithm does not have a way to catch a win part way through
+					aiMove = null;
+					blackwin = true;
+					repaint();
+				}
+				}
+				else{
+					aiMove = bAI.simpleRule(Board.this);
+				}
+				
+				System.out.println("Chosen move: "+aiMove.toString());
+				setCurrentChecker(matchChecker(aiMove));
+				oldrow = aiMove.getChecker().getRow();
+				oldcol = aiMove.getChecker().getCol();
+				
+			System.out.println("\\\\\\\\\\ " + validMoveAI(aiMove.getNRow(),aiMove.getNCol() ));
+				if(validMoveAI(aiMove.getNRow(),aiMove.getNCol() )){
+					synchronized(checkerslist){
+					movePiece(matchChecker(aiMove),aiMove.getNCol(),aiMove.getNRow() );
+					currentChecker.setCol(aiMove.getNCol());
+					currentChecker.setRow(aiMove.getNRow());
+					currentChecker.cx = (aiMove.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
+					currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+					}
+					
+				}
+				pieceTaken();
+				takePieceFlag = false;
+				
+				
+				
+				
+				promotionCheck(aiMove.getNRow());
+				log.appendLog("Move Made: " + aiMove);
+				if(player.equals("RED")){
+					setCurrentPlayer(humanBLACK);
+					player = "BLACK";
+				}
+				else{
+					setCurrentPlayer(humanRED);
+					player = "RED";
+				}
+				
+			i++;
+			repaint();	
+	
+			}while(!redwin || !blackwin || i<1001);
+			
+			if(i>=1000){
+				stalemate = true;
+				repaint();
+			}
+			
 		}
+		
+		
 	}
 	public Board cloneBoard (){
 		Board cB = new Board(log ,"");
@@ -407,7 +480,11 @@ public class Board extends JComponent {
 		cB.checkerslist = cList;
 		cB.getHumanRED().setPlayerCheckers(rList);
 		cB.getHumanBLACK().setPlayerCheckers(bList);
+		
 		cB.setCurrentChecker(new Checker(currentChecker));
+		
+			
+		
 		cB.oldcol = new Integer(oldcol);
 		cB.oldrow = new Integer(oldrow);
 		return cB;
@@ -490,6 +567,15 @@ public void pieceTaken(){
 		else if(blackwin)
 		{
 			String string = "BLACK PLAYER WINS";
+			FontMetrics fm = g.getFontMetrics();
+			Rectangle2D r = fm.getStringBounds(string, g);
+			int x = (this.getWidth() - (int) r.getWidth()) / 2;
+		    int y = (this.getHeight() - (int) r.getHeight()) / 2 + fm.getAscent();
+			g.drawString(string, x, y);
+		}
+		else if(stalemate)
+		{
+			String string = "STALEMATE";
 			FontMetrics fm = g.getFontMetrics();
 			Rectangle2D r = fm.getStringBounds(string, g);
 			int x = (this.getWidth() - (int) r.getWidth()) / 2;

@@ -385,6 +385,21 @@ public class AIMM extends Player {
 			// check each space and add each possible move
 
 		}
+		if(nextMoves.size()==0){
+			if(board.player.equals("BLACK")){
+				board.redwin = true;
+			}
+			else{
+				board.blackwin = true;
+			}
+			
+		}
+		if (board.redwin == true || board.blackwin == true) // check if player
+															// has won
+		{
+			System.out.print("game ended");
+			return nextMoves; // return empty move list
+		}
 		return nextMoves;
 	}
 

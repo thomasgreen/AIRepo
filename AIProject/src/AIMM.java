@@ -14,7 +14,7 @@ public class AIMM extends Player {
 	}
 
 	public Board copyBoard(Board b) {
-		Board cb = new Board(b.log);
+		Board cb = new Board(b.log, "");
 		cb = b.cloneBoard();
 		return cb;
 	}
@@ -279,7 +279,7 @@ public class AIMM extends Player {
 						// here
 						for (int k = -2; k < 3; k++) {
 							board.setTPFlag(false);
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
 								if (board.getTPFlag()) {
 									nextMoves.add(
@@ -305,7 +305,7 @@ public class AIMM extends Player {
 							// if the move is valid add it to the moves
 							// list
 
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
 								if (board.getTPFlag()) {
 									nextMoves.add(
@@ -336,7 +336,7 @@ public class AIMM extends Player {
 							// if the move is valid add it to the moves
 							// list
 
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
 									if (board.getTPFlag()) {
 									nextMoves.add(
@@ -363,7 +363,7 @@ public class AIMM extends Player {
 							// if the move is valid add it to the moves
 							// list
 
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
 								
 								if (board.getTPFlag()) {

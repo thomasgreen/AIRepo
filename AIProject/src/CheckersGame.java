@@ -19,7 +19,7 @@ public class CheckersGame extends JFrame {
 		super(title);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
-		Board board = new Board(log);
+		Board board = new Board(log, title);
 		log.show();
 		
 
@@ -96,13 +96,13 @@ public class CheckersGame extends JFrame {
 	    newGameMenu.add(aaMenuItem);
 	    setJMenuBar(menuBar);
 	    
-	    JMenuItem easy = new JMenuItem("EASY");
+	    JMenuItem easy = new JMenuItem("SRB");
 	    haMenuItem.add(easy);
 	    
 	    JMenuItem medium = new JMenuItem("MEDIUM");
 	    haMenuItem.add(medium);
 	    
-	    JMenuItem hard = new JMenuItem("HARD");
+	    JMenuItem hard = new JMenuItem("MiniMax");
 	    haMenuItem.add(hard);
 	    
 	    setJMenuBar(menuBar);
@@ -120,15 +120,28 @@ public class CheckersGame extends JFrame {
 		    }
 
 		});
+		hard.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+
+		    	
+		        new CheckersGame("MiniMax");
+		        setVisible(false); //you can't see me!
+		        dispose(); //Destroy the JFrame object
+		    }
+
+		});
 		
-		//EASY HUMAN V AI
+		//EASY HUMAN V AI#
+		
 		easy.addActionListener(new ActionListener() {
 
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
 
 		    	
-		        new CheckersGame("Checkers EASY VS AI");
+		        new CheckersGame("SRB");
 		        setVisible(false); //you can't see me!
 		        dispose(); //Destroy the JFrame object
 		    }

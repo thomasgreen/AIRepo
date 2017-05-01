@@ -81,15 +81,15 @@ public class Board extends JComponent {
 	
 	private Checker checkerDELETE;
 	public AILog log;
+	String gameType = "MiniMax";
 	
 	
-	
-	public Board(AILog log) {
+	public Board(AILog log, String title) {
 		this.log = log;
 		checkerslist = new ArrayList<Checker>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 		humanRED = new AIMM("RED");
-		
+		gameType = title;
 		humanBLACK = new Human("BLACK");
 		setCurrentPlayer(humanBLACK); //sets the red player as the first player
 		takePieceFlag = false;
@@ -206,7 +206,8 @@ public class Board extends JComponent {
 				{
 					if(currentPlayer.equals(humanBLACK))
 					{
-						/*
+						if(gameType.equals("SRB")){
+						
 						System.out.println("hr checkers"+humanRED.getPlayerCheckers());
 						AI2 srbAI = new AI2("Red");
 						setCurrentPlayer(humanRED);
@@ -235,10 +236,13 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-						*/
+						setCurrentPlayer(humanBLACK);
+						player = "BLACK";
+						
+						}
 						
 						
-						
+						else if (gameType.equals("MiniMax")){
 						setCurrentPlayer(humanRED);
 						player = "RED";
 						Move aiMove = humanRED.getAIMove(Board.this);
@@ -261,9 +265,13 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
+						}else{
+						setCurrentPlayer(humanRED);
+						player = "RED";
+						}
+						
 					}
 					else if(currentPlayer.equals(humanRED))
 					{
@@ -311,7 +319,7 @@ public class Board extends JComponent {
 
 	}
 	public Board cloneBoard (){
-		Board cB = new Board(log);
+		Board cB = new Board(log ,"");
 		List<Checker> cList = new ArrayList<>();
 		List<Checker> rList = new ArrayList<>();
 		List<Checker> bList = new ArrayList<>();
@@ -468,7 +476,7 @@ public void pieceTaken(){
 																		  // is valid
 					{
 						if(!alreadyOccupied(newcol, newrow))
-						return true;
+						valid = true;
 
 					}
 				}
@@ -483,7 +491,7 @@ public void pieceTaken(){
 							{
 								takePieceFlag = true;
 								
-								return true;
+								valid = true;
 							}
 						}
 					
@@ -556,6 +564,149 @@ public void pieceTaken(){
 				{
 					if(!alreadyOccupied(newcol, newrow)){
 					System.out.println("Checking King : CoL");		
+					valid = true;
+					}
+				}
+			}
+			if ((currentChecker.getRow() + 2) == newrow || ((currentChecker.getRow() - 2) == newrow)){
+				if ((currentChecker.getCol() + 2) == newcol || (currentChecker.getCol() - 2) == newcol) // if col move
+																	// is valid
+				{if(validTake("RED", newrow, newcol) && !alreadyOccupied(newcol, newrow))
+					{
+					System.out.println("take valid");	
+					takePieceFlag = true;
+					
+					valid = true;
+					}
+
+				}
+			}
+		}
+		
+		//check if piece is being taken
+
+		for (Checker checker : checkerslist)
+		{
+			if (((checker != Board.this.currentChecker) && (checker.cx == Board.this.currentChecker.cx)
+					&& (checker.cy == Board.this.currentChecker.cy))) {
+
+				Board.this.currentChecker.cx = oldcx;
+				Board.this.currentChecker.cy = oldcy;
+				
+				valid = false;
+				takePieceFlag = false;
+			}
+		}
+			
+		
+		return valid;
+		//
+	}
+	public boolean validMoveAI(int newrow, int newcol) {
+		// normal move
+	if(newrow>8 || newrow<1 || newcol>8 || newcol<1){
+		return false;
+	}
+		CheckerType checkertype = currentChecker.getCheckerType();
+		
+		boolean valid = false;
+		 if(checkertype == CheckerType.RED_REGULAR && player.equals("RED"))
+		{
+			//can only move down the board
+			 if ((currentChecker.getRow() + 1) == newrow)
+				{
+					if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
+																		  // is valid
+					{
+						if(!alreadyOccupied(newcol, newrow))
+						return true;
+
+					}
+				}
+			//test if peice is being taken
+			 if ((currentChecker.getRow() + 2) == newrow)
+				{
+					if ((currentChecker.getCol() + 2) == newcol || (currentChecker.getCol() - 2) == newcol) // if col move
+																		  // is valid
+					{
+						if(!alreadyOccupied(newcol, newrow)){
+							if(validTake("RED", newrow, newcol))
+							{
+								takePieceFlag = true;
+								
+								return true;
+							}
+						}
+					
+					}
+				}
+		}
+		else if(checkertype == CheckerType.BLACK_REGULAR && player.equals("BLACK"))
+		{
+			//can only move up the board
+			if ((currentChecker.getRow() - 1) == newrow)
+			{
+				if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
+																	  // is valid
+				{
+					if(!alreadyOccupied(newcol, newrow)){
+					return true;
+					}
+				}
+			}
+			if ((currentChecker.getRow() - 2) == newrow)
+			{
+				if ((currentChecker.getCol() + 2) == newcol || (currentChecker.getCol() - 2) == newcol) // if col move
+																	  // is valid
+				{
+					if(validTake("BLACK", newrow, newcol) && !alreadyOccupied(newcol, newrow))
+					{
+						takePieceFlag = true;
+						pieceTaken();
+						return true;
+					}
+
+				}
+			}
+			//
+		}
+		else if((checkertype == CheckerType.BLACK_KING && player.equals("BLACK")))
+		{
+			//can move up and down
+			
+			if ((currentChecker.getRow() + 1) == newrow || ((currentChecker.getRow() - 1) == newrow)){
+				if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
+																// is valid
+				{
+					if(!alreadyOccupied(newcol, newrow)){
+					return true;
+					}
+				}
+			}
+			if ((currentChecker.getRow() + 2) == newrow || ((currentChecker.getRow() - 2) == newrow)){
+				if ((currentChecker.getCol() + 2) == newcol || (currentChecker.getCol() - 2) == newcol) // if col move
+																		// is valid
+				{if(validTake("BLACK", newrow, newcol)&& !alreadyOccupied(newcol, newrow))
+					{
+					takePieceFlag = true;
+					pieceTaken();
+					return true;
+					}
+
+				}
+			}
+		}else if(checkertype == CheckerType.RED_KING && player.equals("RED"))
+		{
+			//can move up and down
+			
+			System.out.println("Checking King");
+			if ((currentChecker.getRow() + 1) == newrow || ((currentChecker.getRow() - 1) == newrow)){
+				System.out.println("Checking King : Row");
+				if ((currentChecker.getCol() + 1) == newcol || (currentChecker.getCol() - 1) == newcol) // if col move
+																// is valid
+				{
+					if(!alreadyOccupied(newcol, newrow)){
+					System.out.println("Checking King : CoL");		
 					return true;
 					}
 				}
@@ -577,18 +728,7 @@ public void pieceTaken(){
 		
 		//check if piece is being taken
 
-		for (Checker checker : checkerslist)
-		{
-			if (((checker != Board.this.currentChecker) && (checker.cx == Board.this.currentChecker.cx)
-					&& (checker.cy == Board.this.currentChecker.cy))) {
-
-				Board.this.currentChecker.cx = oldcx;
-				Board.this.currentChecker.cy = oldcy;
-				
-				valid = false;
-				takePieceFlag = false;
-			}
-		}
+	
 			
 		
 		return valid;

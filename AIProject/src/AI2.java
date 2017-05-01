@@ -94,7 +94,7 @@ public class AI2 extends Player {
 													// here
 						for (int k = -2; k < 3; k++) {
 							board.setTPFlag(false);
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
 																								// the
 																								// move
 																								// is
@@ -140,7 +140,7 @@ public class AI2 extends Player {
 								// list
 								
 								
-								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
+								if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
 									System.out.println("----------------valid move");
 									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
 									System.out.println("Col: " + k +"\nRow: " + i );
@@ -171,7 +171,7 @@ public class AI2 extends Player {
 								// if the move is valid add it to the moves
 								// list
 								
-								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
+								if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
 									System.out.println("----------------valid move king");
 									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
 									System.out.println("Col: " + k +"\nRow: " + i );

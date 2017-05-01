@@ -387,7 +387,7 @@ public class Board extends JComponent {
 				
 				repaint();	
 				
-			}while(!redwin || !blackwin);
+			}while(!redwin && !blackwin && !stalemate);
 		}else if(gameType.equals("SRAIvsMMAI")){
 			setCurrentChecker(humanBLACK.getPlayerCheckers().get(0));
 			int i = 0;
@@ -444,14 +444,16 @@ public class Board extends JComponent {
 				}
 				
 			i++;
-			repaint();	
-	
-			}while(!redwin || !blackwin || i<1001);
-			
-			if(i>=1000){
+			if(i>1000){
 				stalemate = true;
 				repaint();
 			}
+			System.out.println("THE CURRENT TURN IS: "+i);
+			repaint();	
+	
+			}while(!redwin && !blackwin && !stalemate);
+			
+			
 			
 		}
 		

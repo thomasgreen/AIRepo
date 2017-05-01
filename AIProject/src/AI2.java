@@ -1,6 +1,7 @@
 
 //Class for generic AI, to be worked on later
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -55,6 +56,7 @@ public class AI2 extends Player {
 		
 		int count = 0;
 		  if(((checker.getRow()+i)<=8) && ((checker.getCol()+k)<=8) && ((checker.getCol()+k)>=1)){ //stops a move that would exit the board from being valid
+			 synchronized(board.checkerslist){
 			  for(Checker c : board.checkerslist){
 				  
 				  if(!checker.equals(c)){ 
@@ -71,6 +73,7 @@ public class AI2 extends Player {
 				  
 				  
 			  }
+			 }
 		  }
 			 
 		  return count;
@@ -78,10 +81,11 @@ public class AI2 extends Player {
 	}
 
 	public List<Move> generateMoves(Board board) {
-		List<Move> nextMoves = new ArrayList<Move>(); //the list of possible moves to be returned to the ai
-
-
-		for (Checker checker : board.checkerslist) {
+		List<Move> nextMoves = Collections.synchronizedList(new ArrayList<Move>()); //the list of possible moves to be returned to the ai
+		List<Checker> checkerslist = Collections.synchronizedList(new ArrayList<Checker>());
+		checkerslist = board.checkerslist;
+		synchronized(checkerslist){
+		for (Checker checker : checkerslist) {
 			System.out.println(checker.getRow());
 			System.out.println(checker.getCol());
 			board.oldrow = checker.getRow(); 
@@ -107,7 +111,7 @@ public class AI2 extends Player {
 																								// list
 								if (board.getTPFlag()) {
 									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
-									
+									board.setTPFlag(false);
 								} else {
 									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 								}
@@ -119,6 +123,37 @@ public class AI2 extends Player {
 					}
 
 				}
+				else if(checker.getCheckerType().equals(CheckerType.BLACK_KING)){
+					System.out.println("black moves king");
+					board.setCurrentChecker(checker);
+					 // the same rules from the
+					// valid move section
+					// used here
+					for (int i = -2; i < 3; i++) {
+						for (int k = -2; k < 3; k++) {
+							board.setTPFlag(false);
+							// if the move is valid add it to the moves
+							// list
+							
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
+								System.out.println("----------------valid move king");
+								System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
+								System.out.println("Col: " + k +"\nRow: " + i );
+								if (board.getTPFlag()) {
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
+									board.setTPFlag(false);
+								} else {
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
+								}
+							} else {
+								
+								
+							}
+						}
+				}
+					}
 
 			}
 
@@ -159,7 +194,7 @@ public class AI2 extends Player {
 							}
 						}
 
-					}else if(checker.getCheckerType().equals(CheckerType.RED_KING) || checker.getCheckerType().equals(CheckerType.BLACK_KING)){
+					}else if(checker.getCheckerType().equals(CheckerType.RED_KING)){
 						System.out.println("red moves king");
 						board.setCurrentChecker(checker);
 						 // the same rules from the
@@ -196,12 +231,14 @@ public class AI2 extends Player {
 			}
 			// check each space and add each possible move
 
+			}
 		}
 		String colourM ="";
 		String colourM1="";
-		
+		synchronized(nextMoves){
 		for(Move m : nextMoves){
-			for(Checker c : board.checkerslist){
+			synchronized(checkerslist){
+			for(Checker c : checkerslist){
 				if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_KING) || 
 					m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR)){
 					colourM = "BLACK";
@@ -236,6 +273,8 @@ public class AI2 extends Player {
 					
 				}
 			}
+			}
+		}
 		}
 		if(nextMoves.size()==0){
 			if(board.player.equals("BLACK")){

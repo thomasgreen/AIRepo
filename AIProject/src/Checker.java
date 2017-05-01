@@ -79,4 +79,7 @@ public final class Checker {
 			checkerType = CheckerType.BLACK_KING;
 		}
 	}
+	public String toString(){
+		return "Checker: " + col + ", " + row +"\n";
+	}
 }

@@ -132,6 +132,18 @@ public class CheckersGame extends JFrame {
 		    }
 
 		});
+		medium.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+
+		    	
+		        new CheckersGame("AIvsAI");
+		        setVisible(false); //you can't see me!
+		        dispose(); //Destroy the JFrame object
+		    }
+
+		});
 		
 		//EASY HUMAN V AI#
 		

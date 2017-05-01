@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Player {
@@ -9,7 +10,7 @@ public abstract class Player {
 	
 	public Player(String checkerColour)
 	{
-		playerCheckers = new ArrayList<>();
+		playerCheckers = Collections.synchronizedList(new ArrayList<>());
 		this.CheckerColour = checkerColour;
 	}
 	

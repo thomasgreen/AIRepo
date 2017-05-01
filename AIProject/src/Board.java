@@ -86,7 +86,7 @@ public class Board extends JComponent {
 	
 	public Board(AILog log) {
 		this.log = log;
-		checkerslist = new ArrayList<>();
+		checkerslist = new ArrayList<Checker>();
 		dimPrefSize = new Dimension(BOARDDIM, BOARDDIM);
 		
 		humanRED = new Human("RED");
@@ -206,7 +206,7 @@ public class Board extends JComponent {
 				{
 					if(currentPlayer.equals(humanBLACK))
 					{
-						
+						/*
 						System.out.println("hr checkers"+humanRED.getPlayerCheckers());
 						AI2 srbAI = new AI2("Red");
 						setCurrentPlayer(humanRED);
@@ -235,8 +235,8 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
+						*/
 						
-						/*
 						AIMM mmAI = new AIMM("RED");
 						setCurrentPlayer(humanRED);
 						player = "RED";
@@ -260,7 +260,7 @@ public class Board extends JComponent {
 						
 						promotionCheck(aiMove.getNRow());
 						log.appendLog("Move Made: " + aiMove);
-						*/
+						
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
 					}
@@ -636,7 +636,7 @@ public void pieceTaken(){
 			System.out.println("checking black valid take on red");
 			System.out.println("ERROR");
 			//search red checkers
-			for(Checker checker: checkerslist)
+			for(Checker checker: humanRED.getPlayerCheckers())
 			{
 				if(checker.getCheckerType().equals(CheckerType.BLACK_KING) || checker.getCheckerType().equals(CheckerType.BLACK_REGULAR)){
 					colourChecker = "BLACK";

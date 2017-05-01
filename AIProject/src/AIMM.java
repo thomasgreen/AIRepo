@@ -90,7 +90,6 @@ public class AIMM extends Player {
 
 		for (Move move : moves) {
 			// Make second row
-			System.out.println("a1ddingmoves");
 			Board temp = board;
 			temp.movePieceAI(move);
 			temp.takePiece(move);
@@ -99,7 +98,6 @@ public class AIMM extends Player {
 
 			for (Move sMove : secondMoves) {
 				// Make third row
-				System.out.println("a2ddingmoves");
 				Board temp2 = temp;
 				temp2.movePieceAI(sMove);
 				temp2.takePiece(sMove);
@@ -145,13 +143,13 @@ public class AIMM extends Player {
 	}
 
 	private int score(Board board, String colour) {
+		System.out.println("BLACK: " + board.getHumanBLACK().getPlayerCheckers().size());
+		System.out.println("RED: " + board.getHumanRED().getPlayerCheckers().size());
 		
-		
-		if(colour.equals("RED"))
+		int score = 0;
+		if(colour.equals("RED"))		
 		{
-			int score = 0;
-			
-			for(Checker checker : board.checkerslist)
+			for(Checker checker : board.getHumanBLACK().getPlayerCheckers())
 			{
 				CheckerType checkerType = checker.getCheckerType();
 				switch(checkerType){
@@ -169,13 +167,29 @@ public class AIMM extends Player {
 					 break;
 				}
 			}
-			return score;
+			for(Checker checker : board.getHumanRED().getPlayerCheckers())
+			{
+				CheckerType checkerType = checker.getCheckerType();
+				switch(checkerType){
+				case RED_REGULAR: 
+					 score = score + 1;
+					 break;
+				case BLACK_REGULAR:
+					 score = score - 1;
+					 break;
+				case RED_KING:
+					 score = score + 2;
+					 break;
+				case BLACK_KING:
+					 score = score - 2;
+					 break;
+				}
+			}
 		}
 		else
 		{
-			int score = 0;
 			
-			for(Checker checker : board.checkerslist)
+			for(Checker checker : board.getHumanRED().getPlayerCheckers())
 			{
 				CheckerType checkerType = checker.getCheckerType();
 				switch(checkerType){
@@ -193,37 +207,31 @@ public class AIMM extends Player {
 					break;
 				}
 			}
-			
-			
-			return score;
 
-		}
-		
-		/*
-		int score = 0;
-		
-		for(Checker checker : board.checkerslist)
-		{
-			CheckerType checkerType = checker.getCheckerType();
-			switch(checkerType){
-			case RED_REGULAR: 
-				//do something
-				score += 1;
-			case BLACK_REGULAR:
-				//do something
-				score -= 1;
-			case RED_KING:
-				//do something
-				score += 5;
-			case BLACK_KING:
-				//do something
-				score -= 5;
+			for(Checker checker : board.getHumanBLACK().getPlayerCheckers())
+			{
+				CheckerType checkerType = checker.getCheckerType();
+				switch(checkerType){
+				case RED_REGULAR: 
+					score = score - 1;
+					break;
+				case BLACK_REGULAR:
+					score = score + 1;
+					break;
+				case RED_KING:
+					score = score - 2;
+					break;
+				case BLACK_KING:
+					score = score + 2;
+					break;
+				}
 			}
+
+			
 		}
-		
-		
+		System.out.println(score);
 		return score;
-*/
+	
 	}
 
 	public int areaCheck(Checker checker, int i, int k, Board board) {
@@ -255,7 +263,6 @@ public class AIMM extends Player {
 		if (b.redwin == true || b.blackwin == true) // check if player
 		// has won
 		{
-			System.out.print("game ended");
 			return nextMoves; // return empty move list
 		}
 
@@ -283,8 +290,6 @@ public class AIMM extends Player {
 											false));
 								}
 
-							} else {
-								System.out.println("b invalid move " + i + k + ", " + board.oldrow + board.oldcol);
 							}
 						}
 					}
@@ -302,9 +307,6 @@ public class AIMM extends Player {
 
 							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
-								System.out.println("----------------valid move");
-								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
-								System.out.println("Col: " + k + "\nRow: " + i);
 								if (board.getTPFlag()) {
 									nextMoves.add(
 											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
@@ -336,10 +338,7 @@ public class AIMM extends Player {
 
 							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
-								System.out.println("----------------valid move");
-								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
-								System.out.println("Col: " + k + "\nRow: " + i);
-								if (board.getTPFlag()) {
+									if (board.getTPFlag()) {
 									nextMoves.add(
 											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 									board.setTPFlag(false);
@@ -354,7 +353,6 @@ public class AIMM extends Player {
 					}
 
 				} else if (checker.getCheckerType().equals(CheckerType.RED_KING)) {
-					System.out.println("red moves");
 					board.setCurrentChecker(checker);
 					// the same rules from the
 					// valid move section
@@ -367,9 +365,7 @@ public class AIMM extends Player {
 
 							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
 									&& areaCheck(checker, i, k, board) == 0) {
-								System.out.println("----------------valid move");
-								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
-								System.out.println("Col: " + k + "\nRow: " + i);
+								
 								if (board.getTPFlag()) {
 									nextMoves.add(
 											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
@@ -389,7 +385,6 @@ public class AIMM extends Player {
 			// check each space and add each possible move
 
 		}
-		System.out.println("MY STUPID TEST: " + nextMoves);
 		return nextMoves;
 	}
 

@@ -2,6 +2,7 @@
 //Class for generic AI, to be worked on later
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AI2 extends Player {
 	
@@ -20,27 +21,44 @@ public class AI2 extends Player {
 		
 		System.out.println("AI board");
 		System.out.println(board.checkerslist);
-		List<Move> gMoves = new ArrayList<Move>();
-		gMoves = generateMoves(board);
+		List<Move> gMoves = new ArrayList<Move>(); //list of valid moves from generate moves
+		List<Move> nonThreatMoves = new ArrayList<Move>(); //list of non threatening moves
+		gMoves = generateMoves(board); //populate gMoves
 		System.out.println(gMoves);
 		for (Move m : gMoves) {
-			if (m.getCap()) {
+			if (m.getCap()) { //for eahc move in gmoves, check if a enemy piece can be taken
 				return m;
 			}
 		}
-		System.out.println("AND THE ARRAY VALUE @ 0 IS: " + gMoves.get(0));
+		for (Move m : gMoves){ // if not pieces can be taken, find a move that would not result in a piece being threatened
+			if(!m.getThreat()){
+				nonThreatMoves.add(m);
+			}
+		}
+		Random rand = new Random();
 		
-		return gMoves.get(0);
+		if(nonThreatMoves.size()!=0){
+			return nonThreatMoves.get(rand.nextInt(nonThreatMoves.size())+0); //return a random move that is non threatening
+		}
+		try{
+			gMoves.get(0);
+		}catch (IndexOutOfBoundsException ex){
+			System.out.println("Red play is out of Moves Black Wins");
+			return null;
+			
+		}
+		
+		return gMoves.get(rand.nextInt(gMoves.size())+0); //if there are no other moves, return a random move from the valid moves list
 	}
 	
 	public int areaCheck(Checker checker, int i, int k, Board board) {
-		 //&& !(checker.getRow()+i>9) && !(checker.getCol()+i>9) && (checker.getCol()+i>0)
+		
 		int count = 0;
-		  if(((checker.getRow()+i)<=8) && ((checker.getCol()+k)<=8) && ((checker.getCol()+k)>=1)){
+		  if(((checker.getRow()+i)<=8) && ((checker.getCol()+k)<=8) && ((checker.getCol()+k)>=1)){ //stops a move that would exit the board from being valid
 			  for(Checker c : board.checkerslist){
 				  
 				  if(!checker.equals(c)){ 
-						 if((checker.getRow()+i)==c.getRow() && ((checker.getCol()+k) == c.getCol())){
+						 if((checker.getRow()+i)==c.getRow() && ((checker.getCol()+k) == c.getCol())){ //checks the space is not already occupied
 							
 								 
 								 count++;
@@ -60,15 +78,8 @@ public class AI2 extends Player {
 	}
 
 	public List<Move> generateMoves(Board board) {
-		List<Move> nextMoves = new ArrayList<Move>(); // placeholder list for
-														// moves
+		List<Move> nextMoves = new ArrayList<Move>(); //the list of possible moves to be returned to the ai
 
-		if (board.redwin == true || board.blackwin == true) // check if player
-															// has won
-		{
-			System.out.print("game ended");
-			return nextMoves; // return empty move list
-		}
 
 		for (Checker checker : board.checkerslist) {
 			System.out.println(checker.getRow());
@@ -83,7 +94,7 @@ public class AI2 extends Player {
 													// here
 						for (int k = -2; k < 3; k++) {
 							board.setTPFlag(false);
-							if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
+							if (board.validMoveAI(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) { // if
 																								// the
 																								// move
 																								// is
@@ -148,7 +159,7 @@ public class AI2 extends Player {
 							}
 						}
 
-					}else if(checker.getCheckerType().equals(CheckerType.RED_KING)){
+					}else if(checker.getCheckerType().equals(CheckerType.RED_KING) || checker.getCheckerType().equals(CheckerType.BLACK_KING)){
 						System.out.println("red moves king");
 						board.setCurrentChecker(checker);
 						 // the same rules from the
@@ -205,16 +216,17 @@ public class AI2 extends Player {
 					else{
 						colourM1 = "RED";
 					}
-				if(!m.getChecker().equals(c) && !colourM.equals(colourM1)  && ((m.getNCol()==c.getCol()+1)||m.getNCol()==c.getCol()-1) && ((m.getNRow()==c.getRow()+1)||m.getNCol()==c.getRow()-1)){
+				if(!m.getChecker().equals(c) && !colourM.equals(colourM1)  && ((m.getNCol()+1==c.getCol())||m.getNCol()-1==c.getCol()) && ((m.getNRow()+1==c.getRow())||m.getNCol()-1==c.getRow())){
 					if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR) && !(m.getNRow()==c.getRow()+1)){
 						m.setThreat(true);
 						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
 								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
 					}
-					else if(m.getChecker().getCheckerType().equals(CheckerType.RED_REGULAR) && !(m.getNRow()==c.getRow()-1)){
+					else if(m.getChecker().getCheckerType().equals(CheckerType.RED_REGULAR) && (m.getNRow()-1!=(c.getRow()))){
 						m.setThreat(true);
 						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
 								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
+								System.out.println(board.checkerslist);
 					}
 					else if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_KING) || m.getChecker().getCheckerType().equals(CheckerType.RED_KING)){
 					m.setThreat(true);
@@ -224,6 +236,21 @@ public class AI2 extends Player {
 					
 				}
 			}
+		}
+		if(nextMoves.size()==0){
+			if(board.player.equals("BLACK")){
+				board.redwin = true;
+			}
+			else{
+				board.blackwin = true;
+			}
+			
+		}
+		if (board.redwin == true || board.blackwin == true) // check if player
+															// has won
+		{
+			System.out.print("game ended");
+			return nextMoves; // return empty move list
 		}
 		System.out.println("MY STUPID TEST: " + nextMoves);
 		return nextMoves;

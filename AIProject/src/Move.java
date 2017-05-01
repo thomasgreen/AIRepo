@@ -6,7 +6,8 @@ public class Move {
 	private int newRow;
 	private int newCol;
 	private boolean capture;
-	public Move(Checker c, int nRow, int nCol, boolean capture)
+	private boolean threatened;
+	public Move(Checker c, int nRow, int nCol, boolean capture, boolean threatened)
 	{
 		checker = c;
 		row = c.getRow();
@@ -14,6 +15,7 @@ public class Move {
 		newRow = nRow;
 		newCol = nCol;
 		this.capture = capture;
+		this.threatened = threatened;
 		
 	}
 	public Checker getChecker(){ return checker;}
@@ -22,6 +24,8 @@ public class Move {
 	public int getCol(){ return col;}
 	public int getNCol(){return newCol;}
 	public boolean getCap(){return capture;}
+	public boolean getThreat(){return threatened;}
+	public void setThreat(boolean set){threatened = set;}
 	public String toString(){
 		String capString = "";
 		if(capture) capString = "Piece Taken";

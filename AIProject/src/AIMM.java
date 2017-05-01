@@ -70,7 +70,7 @@ public class AIMM extends Player {
 			// Make second row
 			System.out.println("a1ddingmoves");
 			Board temp = board;
-			temp.movePiece(move);
+			temp.movePieceAI(move);
 			temp.takePiece(move);
 			Tree firstLayer = new Tree(temp, move, score(temp));
 			List<Move> secondMoves = generateMoves(board, "RED");
@@ -79,7 +79,7 @@ public class AIMM extends Player {
 				// Make third row
 				System.out.println("a2ddingmoves");
 				Board temp2 = temp;
-				temp2.movePiece(sMove);
+				temp2.movePieceAI(sMove);
 				temp2.takePiece(sMove);
 				Tree secondLayer = new Tree(temp2, sMove, score(temp2));
 				List<Move> thirdMoves = generateMoves(board, "RED");
@@ -87,7 +87,7 @@ public class AIMM extends Player {
 				for (Move tMove : thirdMoves) {
 					// Make fourth row
 					Board temp3 = temp2;
-					temp3.movePiece(tMove);
+					temp3.movePieceAI(tMove);
 					temp3.takePiece(tMove);
 
 					secondLayer.addChild(new Tree(temp3, tMove, score(temp3)));
@@ -169,10 +169,10 @@ public class AIMM extends Player {
 								// moves
 								// list
 								if (board.getTPFlag()) {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 
 								} else {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 								}
 
 							} else {
@@ -209,11 +209,11 @@ public class AIMM extends Player {
 									System.out.println("Col: " + k + "\nRow: " + i);
 									if (board.getTPFlag()) {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 										board.setTPFlag(false);
 									} else {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 									}
 								} else {
 									
@@ -240,11 +240,11 @@ public class AIMM extends Player {
 									System.out.println("Col: " + k + "\nRow: " + i);
 									if (board.getTPFlag()) {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 										board.setTPFlag(false);
 									} else {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 									}
 								} else {
 

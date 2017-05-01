@@ -17,6 +17,7 @@ public class AI2 extends Player {
 	}
 
 	public Move simpleRule(Board board) {
+		
 		System.out.println("AI board");
 		System.out.println(board.checkerslist);
 		List<Move> gMoves = new ArrayList<Move>();
@@ -94,10 +95,10 @@ public class AI2 extends Player {
 																								// moves
 																								// list
 								if (board.getTPFlag()) {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 									
 								} else {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 								}
 
 							} else {
@@ -134,11 +135,11 @@ public class AI2 extends Player {
 									System.out.println("Col: " + k +"\nRow: " + i );
 									if (board.getTPFlag()) {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 										board.setTPFlag(false);
 									} else {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 									}
 								} else {
 									
@@ -148,7 +149,7 @@ public class AI2 extends Player {
 						}
 
 					}else if(checker.getCheckerType().equals(CheckerType.RED_KING)){
-						System.out.println("red moves");
+						System.out.println("red moves king");
 						board.setCurrentChecker(checker);
 						 // the same rules from the
 						// valid move section
@@ -160,16 +161,16 @@ public class AI2 extends Player {
 								// list
 								
 								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0) {
-									System.out.println("----------------valid move");
+									System.out.println("----------------valid move king");
 									System.out.println("oldCol: " + checker.getCol() +"\noldRow: " + checker.getRow()  );
 									System.out.println("Col: " + k +"\nRow: " + i );
 									if (board.getTPFlag()) {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 										board.setTPFlag(false);
 									} else {
 										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false));
+												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
 									}
 								} else {
 									
@@ -184,6 +185,45 @@ public class AI2 extends Player {
 			}
 			// check each space and add each possible move
 
+		}
+		String colourM ="";
+		String colourM1="";
+		
+		for(Move m : nextMoves){
+			for(Checker c : board.checkerslist){
+				if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_KING) || 
+					m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR)){
+					colourM = "BLACK";
+				}
+				else{
+					colourM = "RED";
+				}
+				if(c.getCheckerType().equals(CheckerType.BLACK_KING) || 
+						c.getCheckerType().equals(CheckerType.BLACK_REGULAR)){
+						colourM1 = "BLACK";
+					}
+					else{
+						colourM1 = "RED";
+					}
+				if(!m.getChecker().equals(c) && !colourM.equals(colourM1)  && ((m.getNCol()==c.getCol()+1)||m.getNCol()==c.getCol()-1) && ((m.getNRow()==c.getRow()+1)||m.getNCol()==c.getRow()-1)){
+					if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_REGULAR) && !(m.getNRow()==c.getRow()-1)){
+						m.setThreat(true);
+						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
+								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
+					}
+					else if(m.getChecker().getCheckerType().equals(CheckerType.RED_REGULAR) && !(m.getNRow()==c.getRow()+1)){
+						m.setThreat(true);
+						System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
+								"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
+					}
+					else if(m.getChecker().getCheckerType().equals(CheckerType.BLACK_KING) || m.getChecker().getCheckerType().equals(CheckerType.RED_KING)){
+					m.setThreat(true);
+					System.out.println("threatened checker : m @ " + m.getNCol() + ", " + m.getNRow() +"\n" + 
+							"enemy checker : c@ " + c.getCol() + ", " + c.getRow());
+					}
+					
+				}
+			}
 		}
 		System.out.println("MY STUPID TEST: " + nextMoves);
 		return nextMoves;

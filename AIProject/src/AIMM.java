@@ -8,12 +8,12 @@ public class AIMM extends Player {
 	Tree decisionTree;
 	Move lastMove;
 	Board b;
-	
 
 	public AIMM(String checkerColour) {
 		super(checkerColour);
 	}
-	public Board copyBoard(Board b){
+
+	public Board copyBoard(Board b) {
 		Board cb = new Board(b.log);
 		cb = b.cloneBoard();
 		return cb;
@@ -73,7 +73,7 @@ public class AIMM extends Player {
 			temp.movePieceAI(move);
 			temp.takePiece(move);
 			Tree firstLayer = new Tree(temp, move, score(temp));
-			List<Move> secondMoves = generateMoves(board, "RED");
+			List<Move> secondMoves = generateMoves(board, "BLACK");
 
 			for (Move sMove : secondMoves) {
 				// Make third row
@@ -111,20 +111,19 @@ public class AIMM extends Player {
 		// && !(checker.getRow()+i>9) && !(checker.getCol()+i>9) &&
 		// (checker.getCol()+i>0)
 		int count = 0;
-			for (Checker c : board.checkerslist) {
+		for (Checker c : board.checkerslist) {
 
-				if (!checker.equals(c)) {
-					if ((checker.getRow() + i) == c.getRow() && ((checker.getCol() + k) == c.getCol())) {
+			if (!checker.equals(c)) {
+				if ((checker.getRow() + i) == c.getRow() && ((checker.getCol() + k) == c.getCol())) {
 
-						count++;
+					count++;
 
-					} else {
+				} else {
 
-					}
 				}
-
 			}
-		
+
+		}
 
 		return count;
 
@@ -143,9 +142,7 @@ public class AIMM extends Player {
 
 		for (Checker checker : board.checkerslist) {
 			board.player = "RED";
-			
-			
-			
+
 			board.oldrow = checker.getRow();
 			board.oldcol = checker.getCol();
 			if (board.player.equals("BLACK")) {
@@ -157,104 +154,119 @@ public class AIMM extends Player {
 						for (int k = -2; k < 3; k++) {
 							board.setTPFlag(false);
 							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
-									&& areaCheck(checker, i, k, board) == 0) { // if
-								// the
-								// move
-								// is
-								// valid
-								// add
-								// it
-								// to
-								// the
-								// moves
-								// list
+									&& areaCheck(checker, i, k, board) == 0) {
 								if (board.getTPFlag()) {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
 
 								} else {
-									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false,
+											false));
 								}
 
 							} else {
-								System.out.println("b invalid move " + i + k + ", " + board.oldrow + board.oldcol );
+								System.out.println("b invalid move " + i + k + ", " + board.oldrow + board.oldcol);
 							}
 						}
 					}
 
-				}
+				} else if (checker.getCheckerType().equals(CheckerType.BLACK_KING)) {
+					board.setCurrentChecker(checker);
+					// the same rules from the
+					// valid move section
+					// used here
+					for (int i = -1; i > -3; i--) {
+						for (int k = -2; k < 3; k++) {
+							board.setTPFlag(false);
+							// if the move is valid add it to the moves
+							// list
 
-			}
-
-			else {
-				if (board.player.equals("RED")) {
-					
-					if (checker.getCheckerType().equals(CheckerType.RED_REGULAR))
-
-					{
-						
-						board.setCurrentChecker(checker);
-						// the same rules from the
-						// valid move section
-						// used here
-						for (int i = 1; i < 3; i++) {
-							for (int k = -2; k < 3; k++) {
-								board.setTPFlag(false);
-								// if the move is valid add it to the moves
-								// list
-
-								if (board.validMove(checker.getRow() + i, checker.getCol() + k) && areaCheck(checker, i, k, board) == 0)
-										 {
-									System.out.println("----------------valid move");
-									System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
-									System.out.println("Col: " + k + "\nRow: " + i);
-									if (board.getTPFlag()) {
-										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
-										board.setTPFlag(false);
-									} else {
-										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
-									}
+							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+									&& areaCheck(checker, i, k, board) == 0) {
+								System.out.println("----------------valid move");
+								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
+								System.out.println("Col: " + k + "\nRow: " + i);
+								if (board.getTPFlag()) {
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
+									board.setTPFlag(false);
 								} else {
-									
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false,
+											false));
 								}
-							}
-						}
+							} else {
 
-					} else if (checker.getCheckerType().equals(CheckerType.RED_KING)) {
-						System.out.println("red moves");
-						board.setCurrentChecker(checker);
-						// the same rules from the
-						// valid move section
-						// used here
-						for (int i = -2; i < 3; i++) {
-							for (int k = -2; k < 3; k++) {
-								board.setTPFlag(false);
-								// if the move is valid add it to the moves
-								// list
-
-								if (board.validMove(checker.getRow() + i, checker.getCol() + k)
-										&& areaCheck(checker, i, k, board) == 0) {
-									System.out.println("----------------valid move");
-									System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
-									System.out.println("Col: " + k + "\nRow: " + i);
-									if (board.getTPFlag()) {
-										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
-										board.setTPFlag(false);
-									} else {
-										nextMoves.add(
-												new Move(checker, checker.getRow() + i, checker.getCol() + k, false, false));
-									}
-								} else {
-
-								}
 							}
 						}
 					}
 				}
 
+			} else if (board.player.equals("RED")) {
+				if (checker.getCheckerType().equals(CheckerType.RED_REGULAR))
+				{
+
+					board.setCurrentChecker(checker);
+					// the same rules from the
+					// valid move section
+					// used here
+					for (int i = 1; i < 3; i++) {
+						for (int k = -2; k < 3; k++) {
+							board.setTPFlag(false);
+							// if the move is valid add it to the moves
+							// list
+
+							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+									&& areaCheck(checker, i, k, board) == 0) {
+								System.out.println("----------------valid move");
+								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
+								System.out.println("Col: " + k + "\nRow: " + i);
+								if (board.getTPFlag()) {
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
+									board.setTPFlag(false);
+								} else {
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false,
+											false));
+								}
+							} else {
+
+							}
+						}
+					}
+
+				} else if (checker.getCheckerType().equals(CheckerType.RED_KING)) {
+					System.out.println("red moves");
+					board.setCurrentChecker(checker);
+					// the same rules from the
+					// valid move section
+					// used here
+					for (int i = -2; i < 3; i++) {
+						for (int k = -2; k < 3; k++) {
+							board.setTPFlag(false);
+							// if the move is valid add it to the moves
+							// list
+
+							if (board.validMove(checker.getRow() + i, checker.getCol() + k)
+									&& areaCheck(checker, i, k, board) == 0) {
+								System.out.println("----------------valid move");
+								System.out.println("oldCol: " + checker.getCol() + "\noldRow: " + checker.getRow());
+								System.out.println("Col: " + k + "\nRow: " + i);
+								if (board.getTPFlag()) {
+									nextMoves.add(
+											new Move(checker, checker.getRow() + i, checker.getCol() + k, true, false));
+									board.setTPFlag(false);
+								} else {
+									nextMoves.add(new Move(checker, checker.getRow() + i, checker.getCol() + k, false,
+											false));
+								}
+							} else {
+
+							}
+						}
+					}
+				}
 			}
+
 			// check each space and add each possible move
 
 		}

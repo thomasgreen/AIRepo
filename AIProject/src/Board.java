@@ -435,6 +435,10 @@ public void pieceTaken(){
 	public void promotionCheck(int row)
 	{
 		CheckerType checkertype = currentChecker.getCheckerType();
+		if(checkertype == CheckerType.RED_KING || checkertype == CheckerType.BLACK_KING)
+		{
+			return;
+		}
 		if(checkertype == CheckerType.RED_REGULAR && row == 8)
 		{
 			currentChecker.promote();

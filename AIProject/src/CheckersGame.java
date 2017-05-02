@@ -103,7 +103,8 @@ public class CheckersGame extends JFrame {
 	    aaMenuItem.add(srvssr);
 	    JMenuItem aahard = new JMenuItem("SRB VS MM");
 	    aaMenuItem.add(aahard);
-	    
+	    JMenuItem medium = new JMenuItem("MiniMax Easy");
+	    haMenuItem.add(medium);
 	    JMenuItem hard = new JMenuItem("MiniMax");
 	    haMenuItem.add(hard);
 	    
@@ -129,6 +130,18 @@ public class CheckersGame extends JFrame {
 
 		    	
 		        new CheckersGame("MiniMax");
+		        setVisible(false); //you can't see me!
+		        dispose(); //Destroy the JFrame object
+		    }
+
+		});
+		medium.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+
+		    	
+		        new CheckersGame("MiniMaxEasy");
 		        setVisible(false); //you can't see me!
 		        dispose(); //Destroy the JFrame object
 		    }

@@ -261,8 +261,8 @@ public class Board extends JComponent {
 					
 						oldcol = aiMove.getCol();
 						
-						System.out.println("AIMOVE CHECK: " + validMove(aiMove.getNRow(),aiMove.getNCol()));
-						if(validMove(aiMove.getNRow(),aiMove.getNCol())){
+						
+						if(validMoveAI(aiMove.getNRow(),aiMove.getNCol())){
 							synchronized(checkerslist){
 							currentChecker.setCol(aiMove.getNCol());
 							currentChecker.setRow(aiMove.getNRow());
@@ -279,7 +279,36 @@ public class Board extends JComponent {
 						setCurrentPlayer(humanBLACK);
 						player = "BLACK";
 						
-						}
+						}else if (gameType.equals("MiniMaxEasy")){
+							setCurrentPlayer(humanRED);
+							player = "RED";
+							AIMMeasy mmEasy = new AIMMeasy("RED");
+							Move aiMove = mmEasy.getAIMove(Board.this);
+							System.out.println("Chosen move: "+aiMove.toString());
+							setCurrentChecker(matchChecker(aiMove));
+							oldrow = aiMove.getRow();
+						
+							oldcol = aiMove.getCol();
+							
+							
+							if(validMoveAI(aiMove.getNRow(),aiMove.getNCol())){
+								//synchronized(checkerslist){
+								currentChecker.setCol(aiMove.getNCol());
+								currentChecker.setRow(aiMove.getNRow());
+								currentChecker.cx = (aiMove.getNCol() - 1) * SQUAREDIM + SQUAREDIM / 2;
+								currentChecker.cy = (aiMove.getNRow() - 1) * SQUAREDIM + SQUAREDIM / 2;
+								pieceTaken();
+								//}
+							}
+							
+							takePieceFlag = false;
+							
+							promotionCheck(aiMove.getNRow());
+							log.appendLog("Move Made: " + aiMove);
+							setCurrentPlayer(humanBLACK);
+							player = "BLACK";
+							
+							}
 							else{
 						
 						setCurrentPlayer(humanRED);
